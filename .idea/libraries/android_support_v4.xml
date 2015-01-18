@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="android-support-v4">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/cling-core-2.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/seamless-http-1.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/seamless-util-1.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/seamless-xml-1.1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

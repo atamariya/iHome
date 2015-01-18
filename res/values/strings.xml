@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Speech To Text</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="speech_prompt">Say something&#8230;</string>
+    <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
+    <string name="tap_on_mic">Tap on mic to speak</string>
+
+    <string name="appName">Cling Browser</string>
+
+    <string name="deviceDetails">Device Details</string>
+
+    <string name="searchLAN">Search LAN</string>
+    <string name="switchRouter">Network On/Off</string>
+    <string name="toggleDebugLogging">Toggle debug logging</string>
+    <string name="OK">OK</string>
+
+    <string name="searchingLAN">Searching LAN for UPnP devices...</string>
+    <string name="enablingRouter">Enabling network router...</string>
+    <string name="disablingRouter">Disabling network router...</string>
+    <string name="errorSwitchingRouter">Error switching router: </string>
+    <string name="enablingDebugLogging">Enabling debug logging...</string>
+    <string name="disablingDebugLogging">Disabling debug logging...</string>
+    <string name="deviceDetailsNotYetAvailable">Device details are being discovered, please wait.</string>
+
+</resources>

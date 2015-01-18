@@ -1,0 +1,23 @@
+<component name="libraryTable">
+  <library name="android-support-v4 (2)">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/android-support-v4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/cling-core-2.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/javax.servlet-3.0.0.v201112011016.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jetty-client-8.1.16.v20140903.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jetty-continuation-8.1.16.v20140903.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jetty-http-8.1.16.v20140903.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jetty-io-8.1.16.v20140903.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jetty-security-8.1.16.v20140903.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jetty-server-8.1.16.v20140903.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jetty-servlet-8.1.16.v20140903.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jetty-util-8.1.16.v20140903.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/seamless-http-1.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/seamless-util-1.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/seamless-xml-1.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/slf4j-api-1.6.6.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,30 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.0.0"
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), \
+            'proguard-rules.txt'
+        }
+    }
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java', 'gen/main/java']
+        }
+    }
+}
+
+dependencies {
+    compile 'org.fourthline.cling:cling-core:jar:2.0.1'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+}
