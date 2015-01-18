@@ -18,6 +18,8 @@
       <root url="jar://$PROJECT_DIR$/libs/slf4j-api-1.6.6.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../cling-distribution-2.0.1/core/cling-core-2.0.1-sources.jar!/" />
+    </SOURCES>
   </library>
 </component>

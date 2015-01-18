@@ -1,7 +1,5 @@
 package info.androidhive.speechtotext;
 
-import com.ihome.BrowserActivity;
-
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -13,7 +11,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.at.iHome.logic.CommandHandler;
+import com.ihome.BrowserActivity;
+
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends Activity {
@@ -37,8 +38,8 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				browseDevices();
-                //promptSpeechInput();
+//				browseDevices();
+                promptSpeechInput();
 			}
 		});
 
@@ -83,11 +84,11 @@ public class MainActivity extends Activity {
 		switch (requestCode) {
 		case REQ_CODE_SPEECH_INPUT: {
 			if (resultCode == RESULT_OK && null != data) {
-
-				ArrayList<String> result = data
+                List<String> result = data
 						.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 				txtSpeechInput.setText(result.get(0));
-			}
+                CommandHandler.getInstance().execute(result.get(0));
+            }
 			break;
 		}
 
