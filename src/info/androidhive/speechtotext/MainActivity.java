@@ -7,6 +7,7 @@ import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageButton;
@@ -35,6 +36,8 @@ public class MainActivity extends Activity {
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
+    TextToSpeech ttobj;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +58,21 @@ public class MainActivity extends Activity {
             }
         });
 
+        ttobj = new TextToSpeech(getApplicationContext(),
+                new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if (status != TextToSpeech.ERROR) {
+                            ttobj.setLanguage(Locale.UK);
+                        }
+                    }
+                });
+    }
+
+    public void speakText(String toSpeak) {
+        Toast.makeText(getApplicationContext(), toSpeak,
+                Toast.LENGTH_SHORT).show();
+        ttobj.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
 
     }
 
@@ -77,8 +95,8 @@ public class MainActivity extends Activity {
 //		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
 //				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                getString(R.string.speech_prompt));
+//		intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+//				getString(R.string.speech_prompt));
         try {
             startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
         } catch (ActivityNotFoundException a) {
@@ -160,11 +178,11 @@ public class MainActivity extends Activity {
 //    }
 
         protected void onPostExecute(Long result) {
-            String msg = "Command Failed";
+            String msg = "Command Failed. Please try again.";
             if (new Long(0).equals(result)) {
                 msg = "Command successful";
             }
-            txtSpeechInput.setText(msg);
+            speakText(msg);
         }
     }
 }
