@@ -15,6 +15,7 @@ public class DenonAVR extends Device {
 		commands.put("tv", "PutZone_InputFunction/SAT/CBL");
 		commands.put("radio", "PutZone_InputFunction/TUNER");
 		commands.put("internet radio", "PutZone_InputFunction/IRADIO");
+		commands.put("movie", "PutZone_InputFunction/MPLAY");
 		
 		// Volume control
 		commands.put("volume up", "PutMasterVolumeBtn/>");

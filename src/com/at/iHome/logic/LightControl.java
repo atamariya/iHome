@@ -23,10 +23,22 @@ public class LightControl extends Device {
         scheme = "https://";
         uri = "/v1/devices/" + name + "/digitalwrite";
         CMD = "params";
-
-		// Mode control
-		commands.put("on", "D6,HIGH");
+        
+        // Special case
+        commands.put("on", "D6,HIGH");
 		commands.put("off", "D6,LOW");
+		
+		commands.put("1 on", "D6,HIGH");
+		commands.put("1 off", "D6,LOW");
+		
+		commands.put("2 on", "D5,HIGH");
+		commands.put("2 off", "D5,LOW");
+		
+		commands.put("3 on", "D4,HIGH");
+		commands.put("3 off", "D4,LOW");
+		
+		commands.put("4 on", "D3,HIGH");
+		commands.put("4 off", "D3,LOW");
 	}
 
     public Command getCommand(String commandName) {
@@ -39,6 +51,17 @@ public class LightControl extends Device {
         return cmd;
     }
 
+    @Override
+    protected void executeAll(String name) {
+    	super.executeAll(name);
+    	for (String cmd : commands.keySet()) {
+    		if (cmd.indexOf(name) > -1) {
+//    			getCommand(cmd).doInBackground(scheme + host);
+			getCommand(cmd).execute(scheme + host);
+    		}
+		}
+    }
+    
 	public boolean isLightControl() {
 		return true;
 	}
