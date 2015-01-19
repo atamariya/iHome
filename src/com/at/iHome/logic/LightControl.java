@@ -3,6 +3,8 @@ package com.at.iHome.logic;
 import com.at.iHome.api.Command;
 import com.at.iHome.api.Device;
 
+import java.util.List;
+
 /**
  * curl https://api.spark.io/v1/devices/0123456789abcdef01234567/brew \
      -d access_token=9876987698769876987698769876987698769876 -d params=D7,HIGH -d params=D6,LOW
@@ -23,6 +25,7 @@ public class LightControl extends Device {
         scheme = "https://";
         uri = "/v1/devices/" + name + "/digitalwrite";
         CMD = "params";
+        this.url = scheme + host + uri;
         
         // Special case
         commands.put("on", "D6,HIGH");
@@ -52,14 +55,16 @@ public class LightControl extends Device {
     }
 
     @Override
-    protected void executeAll(String name) {
-    	super.executeAll(name);
+    protected List<Command> executeAll(String name) {
+    	List<Command> chain = super.executeAll(name);
     	for (String cmd : commands.keySet()) {
-    		if (cmd.indexOf(name) > -1) {
+    		if (cmd.contains(name)) {
 //    			getCommand(cmd).doInBackground(scheme + host);
-			getCommand(cmd).execute(scheme + host);
+//			getCommand(cmd).execute(scheme + host);
+    			chain.add(getCommand(name));
     		}
 		}
+    	return chain;
     }
     
 	public boolean isLightControl() {

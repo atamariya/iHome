@@ -1,9 +1,12 @@
 package com.at.iHome.logic;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.at.iHome.api.Command;
 import com.at.iHome.api.Device;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CommandHandler {
     private static CommandHandler instance = new CommandHandler();
@@ -33,10 +36,12 @@ public class CommandHandler {
         return instance;
     }
 
-    public void execute(String cmd) {
+    public List<Command> execute(String cmd) {
+        List<Command> chain = new ArrayList<Command>();
         if (cmd == null)
-            return;
+            return chain;
 
+        
         cmd = getSynonym(cmd);
         String[] tokens = cmd.split(" ");
         int i = 0; // token position
@@ -51,30 +56,24 @@ public class CommandHandler {
         if ("volume".equals(token)) {
             for (Device device : devices.values()) {
                 if (device.isAudioDevice()) {
-                    device.execute(cmd);
+                	chain.addAll(device.execute(cmd));
                 }
             }
-//        } else if (token.startsWith("light")) {
-//            // light or lights - both should work
-//            for (Device device : devices.values()) {
-//                if (device.isLightControl()) {
-//                    device.execute(tokens[1]);
-//                }
-//            }
         } else {
             Device device = devices.get(token);
             if (device != null) {
                 token = getSynonym(tokens[i]);
                 device.setAll(all);
-                device.execute(token);
+                chain.addAll(device.execute(token));
             } else {
                 // Handle "all off" case
                 for (Device dev : devices.values()) {
                     dev.setAll(all);
-                    dev.execute(token);
+                    chain.addAll(dev.execute(token));
                 }
             }
         }
+        return chain;
     }
 
     public static void main(String args[]) {
@@ -85,12 +84,17 @@ public class CommandHandler {
 //                "play tv", "play radio", "play game", "play movie",
 //                "volume up", "volume down", "volume mute", "volume unmute",
 //                "all on", "all off",
-//                 "all lights on", "all lights off",
-                "let there be light"
+                 "all lights on", "all lights off",
+//                "let there be light"
         };
+        List<Command> chain = new ArrayList<Command>();
         for (String string : cmd) {
-            CommandHandler.getInstance().execute(string);
+        	chain.addAll(CommandHandler.getInstance().execute(string));
         }
+        
+        for (Command command : chain) {
+			System.out.println(command);
+		}
     }
 
     /**
