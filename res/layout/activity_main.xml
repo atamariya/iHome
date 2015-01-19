@@ -5,13 +5,21 @@
     android:background="@drawable/bg_gradient"
     android:orientation="vertical" >
 
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtSpeechInput"
+        android:layout_centerHorizontal="true" />
+
     <TextView
         android:id="@+id/txtSpeechInput"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="80dp"
         android:textColor="@color/white"
         android:textSize="26dp"
         android:textStyle="normal" />

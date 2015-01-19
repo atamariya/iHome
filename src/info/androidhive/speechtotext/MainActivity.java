@@ -1,6 +1,7 @@
 package info.androidhive.speechtotext;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.http.AndroidHttpClient;
@@ -11,6 +12,7 @@ import android.speech.tts.TextToSpeech;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +38,10 @@ public class MainActivity extends Activity {
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
-    TextToSpeech ttobj;
+    private TextToSpeech ttobj;
+    private ProgressBar progressDialog;
+    private int count = 0;
+    private String msg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +72,16 @@ public class MainActivity extends Activity {
                         }
                     }
                 });
+        progressDialog = (ProgressBar)findViewById(R.id.progressBar1);
+        progressDialog.setVisibility(View.GONE);
     }
 
     public void speakText(String toSpeak) {
+        if (count != 0)
+            return;
+
+        progressDialog.setVisibility(View.GONE);
+        txtSpeechInput.setText(null);
         Toast.makeText(getApplicationContext(), toSpeak,
                 Toast.LENGTH_SHORT).show();
         ttobj.speak(toSpeak, TextToSpeech.QUEUE_FLUSH, null);
@@ -118,9 +130,16 @@ public class MainActivity extends Activity {
                 if (resultCode == RESULT_OK && null != data) {
                     List<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    txtSpeechInput.setText(result.get(0));
+                    String str = result.get(0);
+                    txtSpeechInput.setText(str);
 
-                    List<Command> commands = CommandHandler.getInstance().execute(result.get(0));
+                    List<Command> commands = CommandHandler.getInstance().execute(str);
+                    count = commands.size();
+                    if (count > 0) {
+                        progressDialog.setVisibility(View.VISIBLE);
+                        msg = "Command successful";
+                    } else speakText("I don't understand the command " + str);
+
                     for (Command command : commands)
                         new NetTask().execute(command);
                 }
@@ -178,10 +197,10 @@ public class MainActivity extends Activity {
 //    }
 
         protected void onPostExecute(Long result) {
-            String msg = "Command Failed. Please try again.";
-            if (new Long(0).equals(result)) {
-                msg = "Command successful";
+            if (!new Long(0).equals(result)) {
+                msg = "Command Failed. Please try again.";
             }
+            count--;
             speakText(msg);
         }
     }
