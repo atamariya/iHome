@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by Anand.Tamariya on 18-Jan-15.
  */
-public class Device {
+abstract public class Device {
     protected Map<String, Command> commands = new HashMap<String, Command>();
     protected String host, name;
     protected String scheme = "http://";
@@ -20,12 +20,14 @@ public class Device {
 		System.out.printf("device: %s %s\n", name, host);
 		Command command = commands.get(cmd);
 		if (command != null) {
-//			command.doInBackground(null);
+//			command.doInBackground(scheme + host);
             command.execute(scheme + host);
 		}
 		
 	}
-	
+
+    abstract public Command getCommand(String commandName);
+
 	public boolean isAudioDevice() {
 		return false;
 	}
