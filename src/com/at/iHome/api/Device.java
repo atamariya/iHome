@@ -7,7 +7,10 @@ import java.util.Map;
  * Created by Anand.Tamariya on 18-Jan-15.
  */
 abstract public class Device {
-    protected Map<String, Command> commands = new HashMap<String, Command>();
+    protected String uri;
+    protected String CMD;
+
+    protected Map<String, String> commands = new HashMap<String, String>();
     protected String host, name;
     protected String scheme = "http://";
 
@@ -18,7 +21,7 @@ abstract public class Device {
 
 	public void execute(String cmd) {
 		System.out.printf("device: %s %s\n", name, host);
-		Command command = commands.get(cmd);
+		Command command = getCommand(cmd);
 		if (command != null) {
 //			command.doInBackground(scheme + host);
             command.execute(scheme + host);
@@ -26,9 +29,17 @@ abstract public class Device {
 		
 	}
 
-    abstract public Command getCommand(String commandName);
+    public Command getCommand(String commandName) {
+        Command cmd = null;
+        String param = commands.get(commandName);
+        if (param != null) {
+            cmd = new Command(uri, CMD, param);
+        }
 
-	public boolean isAudioDevice() {
+        return cmd;
+    }
+
+    public boolean isAudioDevice() {
 		return false;
 	}
 

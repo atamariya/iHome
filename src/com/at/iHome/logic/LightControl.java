@@ -14,22 +14,31 @@ import com.at.iHome.api.Device;
 public class LightControl extends Device {
     private String token = "cb1b31f441b50a1f9e4496c44a15da5abb3cfe2b";
 
-	public LightControl(String name, String host) {
-		super(name, host);
+    /**
+     *
+     * @param name token of the device
+     */
+	public LightControl(String name) {
+		super(name, "api.spark.io");
         scheme = "https://";
+        uri = "/v1/devices/" + name + "/digitalwrite";
+        CMD = "params";
 
 		// Mode control
-		String url = "/v1/devices/" + name + "/digitalwrite";
-		Command cmd = new Command(url, "params", "D6,HIGH");
-        String header = "Bearer " + token;
-        cmd.setHeader("Authorization", header);
-		commands.put("on", cmd);
-		
-		cmd = new Command(url, "params", "D6,LOW");
-		cmd.setHeader("Authorization", header);
-		commands.put("off", cmd);
+		commands.put("on", "D6,HIGH");
+		commands.put("off", "D6,LOW");
 	}
-	
+
+    public Command getCommand(String commandName) {
+        Command cmd = super.getCommand(commandName);
+        if (cmd != null) {
+            String header = "Bearer " + token;
+            cmd.setHeader("Authorization", header);
+        }
+
+        return cmd;
+    }
+
 	public boolean isLightControl() {
 		return true;
 	}

@@ -5,39 +5,28 @@ import com.at.iHome.api.Device;
 
 public class DenonAVR extends Device {
 
-    private final String uri = "/MainZone/index.put.asp";
-    private final String CMD = "cmd0";
-
     public DenonAVR(String name, String host) {
 		super(name, host);
+        uri = "/MainZone/index.put.asp";
+        CMD = "cmd0";
 
-		// Mode control
-		Command cmd = new Command(uri, CMD, "PutZone_InputFunction/GAME");
-		commands.put("game", cmd);
-		
-		cmd = new Command(uri, CMD, "PutZone_InputFunction/SAT/CBL");
-		commands.put("tv", cmd);
-		
-		cmd = new Command(uri, CMD, "PutZone_InputFunction/TUNER");
-		commands.put("radio", cmd);
-		
-		cmd = new Command(uri, CMD, "PutZone_InputFunction/IRADIO");
-		commands.put("internet radio", cmd);
+        // Mode control
+		commands.put("game", "PutZone_InputFunction/GAME");
+		commands.put("tv", "PutZone_InputFunction/SAT/CBL");
+		commands.put("radio", "PutZone_InputFunction/TUNER");
+		commands.put("internet radio", "PutZone_InputFunction/IRADIO");
 		
 		// Volume control
-		cmd = new Command(uri, CMD, "PutMasterVolumeBtn/>");
-		commands.put("volume up", cmd);
-		
-		cmd = new Command(uri, CMD, "PutMasterVolumeBtn/<");
-		commands.put("volume down", cmd);
-		
-		cmd = new Command(uri, CMD, "PutVolumeMute/on");
-		commands.put("volume mute", cmd);
-		
-		cmd = new Command(uri, CMD, "PutVolumeMute/off");
-		commands.put("volume unmute", cmd);
+		commands.put("volume up", "PutMasterVolumeBtn/>");
+		commands.put("volume down", "PutMasterVolumeBtn/<");
+		commands.put("volume mute", "PutVolumeMute/on");
+		commands.put("volume unmute", "PutVolumeMute/off");
+
+        // Power control
+        commands.put("on", "PutZone_OnOff/ON");
+        commands.put("off", "PutZone_OnOff/OFF");
 	}
-	
+
 	public boolean isAudioDevice() {
 		return true;
 	}

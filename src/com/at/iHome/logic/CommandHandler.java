@@ -13,7 +13,8 @@ public class CommandHandler {
         Device avr = new DenonAVR("avr", "192.168.0.44");
 		devices.put("play", avr);
         devices.put("watch", avr);
-		devices.put("light", new LightControl("53ff71066667574819442167", "api.spark.io"));
+        devices.put("media", avr);
+		devices.put("light", new LightControl("53ff71066667574819442167"));
 	}
 
 	public static CommandHandler getInstance() {
