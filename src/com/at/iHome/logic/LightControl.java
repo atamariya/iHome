@@ -1,9 +1,9 @@
 package com.at.iHome.logic;
 
+import java.util.List;
+
 import com.at.iHome.api.Command;
 import com.at.iHome.api.Device;
-
-import java.util.List;
 
 /**
  * curl https://api.spark.io/v1/devices/0123456789abcdef01234567/brew \

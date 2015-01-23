@@ -1,85 +1,108 @@
 package com.at.iHome.api;
 
-import com.at.iHome.logic.CommandHandler;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.at.iHome.logic.CommandHandler;
 
 /**
  * Created by Anand.Tamariya on 18-Jan-15.
  */
 abstract public class Device {
-    protected String uri;
-    protected String CMD;
+	protected String uri;
+	protected String CMD;
 
-    protected Map<String, String> commands = new HashMap<String, String>();
-    protected String host, url, name;
-    protected String scheme = "http://";
+	protected Map<String, String> commands = new HashMap<String, String>();
+	protected String host, url, name;
+	protected String scheme = "http://";
 
-    /**
-     * Used for "all lights off/ all off" scenario
-     */
-    protected boolean all = false;
+	/**
+	 * Used for "all lights off/ all off" scenario
+	 */
+	protected boolean all = false;
 
-    public Device(String name, String host) {
-        this.name = name;
-        this.host = host;
-        this.url = scheme + host + uri;
-    }
+	protected Context context;
 
-    public List<Command> execute(String cmd) {
-        System.out.printf("device: %s %s\n", name, host);
-        List<Command> chain = new ArrayList<Command>();
-        if (isAll()) {
-            chain.addAll(executeAll(cmd));
-        } else {
+	public Device(String name, String host) {
+		this.name = name;
+		this.host = host;
+		this.url = scheme + host + uri;
+	}
 
-            Command command = getCommand(CommandHandler.getInstance().getSynonym(cmd));
-            if (command != null) {
-//			command.doInBackground(scheme + host);
-//            command.execute(scheme + host);
-                chain.add(command);
-            }
-        }
-        return chain;
-    }
+	public List<Command> execute(Context ctx, String cmd) {
+		System.out.printf("device: %s %s\n", name, host);
+		List<Command> chain = new ArrayList<Command>();
+		if (!context.equals(ctx)) {
+			return chain;
+		}
 
-    /**
-     * Execute ALL commands matching name.
-     *
-     * @param name
-     */
-    protected List<Command> executeAll(String name) {
-        // Empty method to be over-ridden by subclass
-        return new ArrayList<Command>(1);
-    }
+		if (isAll()) {
+			chain.addAll(executeAll(cmd));
+		} else {
 
-    public Command getCommand(String commandName) {
-        Command cmd = null;
-        String param = commands.get(commandName);
-        if (param != null) {
-            cmd = new Command(url, CMD, param);
-        }
+			Command command = getCommand(CommandHandler.getInstance()
+					.getSynonym(cmd));
+			if (command != null) {
+				// command.doInBackground(scheme + host);
+				// command.execute(scheme + host);
+				chain.add(command);
+			}
+		}
+		return chain;
+	}
 
-        return cmd;
-    }
+	/**
+	 * Execute ALL commands matching name.
+	 * 
+	 * @param name
+	 */
+	protected List<Command> executeAll(String name) {
+		// Empty method to be over-ridden by subclass
+		return new ArrayList<Command>(1);
+	}
 
-    public boolean isAudioDevice() {
-        return false;
-    }
+	public Command getCommand(String commandName) {
+		Command cmd = null;
+		String param = commands.get(commandName);
+		if (param != null) {
+			cmd = new Command(url, CMD, param);
+		}
 
-    public boolean isLightControl() {
-        return false;
-    }
+		return cmd;
+	}
 
-    public boolean isAll() {
-        return all;
-    }
+	public boolean isAudioDevice() {
+		return false;
+	}
 
-    public void setAll(boolean all) {
-        this.all = all;
-    }
+	public boolean isLightControl() {
+		return false;
+	}
+
+	public boolean isAll() {
+		return all;
+	}
+
+	public void setAll(boolean all) {
+		this.all = all;
+	}
+
+	/**
+	 * @return the context
+	 */
+	public Context getContext() {
+		return context;
+	}
+
+	/**
+	 * @param context
+	 *            the context to set
+	 */
+	public void setContext(Context context) {
+		this.context = context;
+	}
 
 }
