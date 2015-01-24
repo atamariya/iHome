@@ -8,9 +8,13 @@ import java.util.Map;
  * Created by Anand.Tamariya on 18-Jan-15.
  */
 public class Command {
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String APPLICATION_JSON = "application/json";
+
     private String url;
     private String name;
     private String value;
+    private String type;
     private Map<String, String> header;
 
     public Command(String uri, String name, String value) {
@@ -69,4 +73,15 @@ public class Command {
     public void setValue(String value) {
         this.value = value;
     }
+
+
+    public boolean isJson() {
+        return APPLICATION_JSON.equals(type);
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+
 }

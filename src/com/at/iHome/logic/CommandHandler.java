@@ -25,6 +25,10 @@ public class CommandHandler {
         device = new LightControl("53ff71066667574819442167");
         device.setContext(new Context("2"));
         devices.put("light", device);
+        
+        device = new XBMC("xbmc", "192.168.0.26");
+        device.setContext(new Context("1"));
+        devices.put("play.1", device);
 
         // devices
         synonyms.put("watch", "play");
@@ -35,6 +39,7 @@ public class CommandHandler {
 
         // commands
         synonyms.put("let there be light", "light on");
+        synonyms.put("resume", "play");
     }
 
     public static CommandHandler getInstance() {
@@ -66,11 +71,12 @@ public class CommandHandler {
             }
         } else {
             Device device = devices.get(token);
-            if (device != null) {
-                token = getSynonym(tokens[i]);
+            if (device != null && tokens.length > 1) {
+           		token = getSynonym(tokens[i]);
                 device.setAll(all);
                 chain.addAll(device.execute(context, token));
             } else {
+            	// Single word command (play/pause/resume) - pass as is
                 // Handle "all off" case
                 for (Device dev : devices.values()) {
                     dev.setAll(all);
@@ -88,9 +94,10 @@ public class CommandHandler {
 //                "lights on", "lights off",
 //                "play tv", "play radio", "play game", "play movie",
 //                "volume up", "volume down", "volume mute", "volume unmute",
-                "all on", "all off",
+//                "all on", "all off",
 //                 "all lights on", "all lights off",
-//                "let there be light"
+//                "let there be light",
+        		"play", "pause",
         };
         Context context = new Context("1");
         List<Command> chain = new ArrayList<Command>();
