@@ -3,8 +3,10 @@ package info.androidhive.speechtotext;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.http.AndroidHttpClient;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -20,9 +22,11 @@ import com.at.iHome.api.Command;
 import com.at.iHome.logic.CommandHandler;
 import com.ihome.BrowserActivity;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 
@@ -42,6 +46,8 @@ public class MainActivity extends Activity {
     private ProgressBar progressDialog;
     private int count = 0;
     private String msg;
+
+    private WifiManager wifiManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +80,8 @@ public class MainActivity extends Activity {
                 });
         progressDialog = (ProgressBar)findViewById(R.id.progressBar1);
         progressDialog.setVisibility(View.GONE);
+
+        wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
     }
 
     public void speakText(String toSpeak) {
@@ -133,15 +141,17 @@ public class MainActivity extends Activity {
                     String str = result.get(0);
                     txtSpeechInput.setText(str);
 
-                    List<Command> commands = CommandHandler.getInstance().execute(str);
+                    com.at.iHome.api.Context context = new com.at.iHome.api.Context("1");
+                    List<Command> commands = CommandHandler.getInstance().execute(context, str);
                     count = commands.size();
                     if (count > 0) {
                         progressDialog.setVisibility(View.VISIBLE);
                         msg = "Command successful";
                     } else speakText("I don't understand the command " + str);
 
-                    for (Command command : commands)
-                        new NetTask().execute(command);
+//                    for (Command command : commands)
+//                      new NetTask().execute(command);
+                    new NetTask().execute(commands.toArray(new Command[commands.size()]));
                 }
                 break;
             }
@@ -174,9 +184,14 @@ public class MainActivity extends Activity {
                         post.setHeader(key, header.get(key));
                 }
 
-                List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-                parameters.add(new BasicNameValuePair(name, value));
-                UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(parameters, HTTP.UTF_8);
+                HttpEntity formEntity = null;
+                if (params[0].isJson()) {
+                    formEntity = new StringEntity(String.format(name, value));
+                } else {
+                    List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+                    parameters.add(new BasicNameValuePair(name, value));
+                    formEntity = new UrlEncodedFormEntity(parameters, HTTP.UTF_8);
+                }
                 post.setEntity(formEntity);
 
                 client.execute(post);
