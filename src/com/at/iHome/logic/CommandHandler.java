@@ -28,7 +28,7 @@ public class CommandHandler {
         
         device = new XBMC("xbmc", "192.168.0.26");
         device.setContext(new Context("1"));
-        devices.put("play.1", device);
+        devices.put("play", device);
 
         // devices
         synonyms.put("watch", "play");
@@ -40,6 +40,8 @@ public class CommandHandler {
         // commands
         synonyms.put("let there be light", "light on");
         synonyms.put("resume", "play");
+        synonyms.put("mute", "volume mute");
+        synonyms.put("unmute", "volume unmute");
     }
 
     public static CommandHandler getInstance() {
@@ -72,7 +74,13 @@ public class CommandHandler {
         } else {
             Device device = devices.get(token);
             if (device != null && tokens.length > 1) {
-           		token = getSynonym(tokens[i]);
+           		token = getSynonym(tokens[i++]);
+                StringBuilder tmp = new StringBuilder();
+                for (int j = i; j < tokens.length; j++) {
+                    tmp.append(tokens[j]).append(" ");
+                }
+
+                device.setParams(tmp.toString());
                 device.setAll(all);
                 chain.addAll(device.execute(context, token));
             } else {
@@ -89,7 +97,9 @@ public class CommandHandler {
 
     public static void main(String args[]) {
         String cmd[] = new String[]{
-//                "play internet radio", "play song no matter what",
+//                "play internet radio", 
+//        		"play song no matter what", "play song"
+        		"play notify message"
 //                "play song no matter what on youtube",
 //                "lights on", "lights off",
 //                "play tv", "play radio", "play game", "play movie",
@@ -97,7 +107,7 @@ public class CommandHandler {
 //                "all on", "all off",
 //                 "all lights on", "all lights off",
 //                "let there be light",
-        		"play", "pause",
+//        		"play", "pause",
         };
         Context context = new Context("1");
         List<Command> chain = new ArrayList<Command>();

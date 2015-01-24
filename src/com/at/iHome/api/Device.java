@@ -1,7 +1,6 @@
 package com.at.iHome.api;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +13,9 @@ import com.at.iHome.logic.CommandHandler;
 abstract public class Device {
 	protected String uri;
 	protected String CMD;
+    protected List<String> params;
 
-	protected Map<String, String> commands = new HashMap<String, String>();
+    protected Map<String, String> commands = new HashMap<String, String>();
 	protected String host, url, name;
 	protected String scheme = "http://";
 
@@ -104,5 +104,14 @@ abstract public class Device {
 	public void setContext(Context context) {
 		this.context = context;
 	}
+
+    public List<String> getParams() {
+        return params;
+    }
+
+    public void setParams(String params) {
+        this.params = new ArrayList<String>();
+        this.params.add(params);
+    }
 
 }
