@@ -28,6 +28,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +45,6 @@ public class MainActivity extends Activity {
 
     private TextToSpeech ttobj;
     private ProgressBar progressDialog;
-    private int count = 0;
     private String msg;
 
     private WifiManager wifiManager;
@@ -84,9 +85,6 @@ public class MainActivity extends Activity {
     }
 
     public void speakText(String toSpeak) {
-        if (count != 0)
-            return;
-
         progressDialog.setVisibility(View.GONE);
         txtSpeechInput.setText(null);
         Toast.makeText(getApplicationContext(), toSpeak,
@@ -142,7 +140,7 @@ public class MainActivity extends Activity {
 
                     com.at.iHome.api.Context context = new com.at.iHome.api.Context("1");
                     List<Command> commands = CommandHandler.getInstance().execute(context, str);
-                    count = commands.size();
+                    int count = commands.size();
                     if (count > 0) {
                         progressDialog.setVisibility(View.VISIBLE);
                         msg = "Command successful";
@@ -169,7 +167,7 @@ public class MainActivity extends Activity {
         protected Long doInBackground(Command... params) {
             Long status = new Long(0);
             AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
-            for (int i = 0; i < params.length; i++) {
+            for (int i = 0; i < params.length && status != new Long("-1"); i++) {
                 String url = params[i].getUrl();
                 String name = params[i].getName();
                 String value = params[i].getValue();
@@ -197,23 +195,25 @@ public class MainActivity extends Activity {
                     formEntity = client.execute(post).getEntity();
 
                     // If it's a macro (chained command), process results
-//                    String str = EntityUtils.toString(formEntity);
-//                    JSONObject json = new JSONObject(str);
-//                    json = json.getJSONObject("result").getJSONObject("movies");
-//                    System.out.println(json.getString("movieid"));
-
+                    String str = EntityUtils.toString(formEntity);
+                    if (params[i].isChained()) {
+                        params[i + 1].setValue(params[i + 1].getResponseProcessor().process(str));
+                    } else if (params[i].isJson()) {
+                        params[i].getResponseProcessor().process(str);
+                    }
 //                publishProgress((int) ((i / (float) count) * 100));
+//        // Escape early if cancel() is called
+                    if (isCancelled())
+                        break;
                 } catch (IOException e) {
                     e.printStackTrace();
                     status = new Long("-1");
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                    status = new Long("-1");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    status = new Long("-1");
                 }
             }
-//
-//        // Escape early if cancel() is called
-//        if (isCancelled()) return;
+
             client.close();
             return status;
         }
@@ -226,7 +226,6 @@ public class MainActivity extends Activity {
             if (!new Long(0).equals(result)) {
                 msg = "Command Failed. Please try again.";
             }
-            count--;
             speakText(msg);
         }
     }

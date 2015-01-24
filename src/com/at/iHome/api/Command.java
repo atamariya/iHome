@@ -17,6 +17,9 @@ public class Command {
     private String type;
     private Map<String, String> header;
 
+    private boolean chained = false;
+	protected ResponseProcessor responseProcessor;
+
     public Command(String uri, String name, String value) {
         this.url = uri;
         this.name = name;
@@ -44,6 +47,7 @@ public class Command {
     public String toString() {
         StringBuilder str = new StringBuilder();
         str.append(url).append(" ");
+        str.append(chained).append(" ");
         str.append(name).append("=");
         str.append(value).append(" ");
         str.append(header);
@@ -83,5 +87,32 @@ public class Command {
         this.type = type;
     }
 
+	/**
+	 * @return the chained
+	 */
+	public boolean isChained() {
+		return chained;
+	}
+
+	/**
+	 * @param chained the chained to set
+	 */
+	public void setChained(boolean chained) {
+		this.chained = chained;
+	}
+
+	/**
+	 * @return the responseProcessor
+	 */
+	public ResponseProcessor getResponseProcessor() {
+		return responseProcessor;
+	}
+
+	/**
+	 * @param responseProcessor the responseProcessor to set
+	 */
+	public void setResponseProcessor(ResponseProcessor responseProcessor) {
+		this.responseProcessor = responseProcessor;
+	}
 
 }
