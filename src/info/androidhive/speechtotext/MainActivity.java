@@ -1,7 +1,6 @@
 package info.androidhive.speechtotext;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -78,7 +77,7 @@ public class MainActivity extends Activity {
                         }
                     }
                 });
-        progressDialog = (ProgressBar)findViewById(R.id.progressBar1);
+        progressDialog = (ProgressBar) findViewById(R.id.progressBar1);
         progressDialog.setVisibility(View.GONE);
 
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
@@ -168,37 +167,49 @@ public class MainActivity extends Activity {
 
     class NetTask extends AsyncTask<Command, Void, Long> {
         protected Long doInBackground(Command... params) {
-            String url = params[0].getUrl();
-            String name = params[0].getName();
-            String value = params[0].getValue();
-            Map<String, String> header = params[0].getHeader();
-            System.out.printf("Command: %s %s %s %s\n", url, name, value, header);
-
             Long status = new Long(0);
             AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
-            try {
-                HttpPost post = new HttpPost(url);
+            for (int i = 0; i < params.length; i++) {
+                String url = params[i].getUrl();
+                String name = params[i].getName();
+                String value = params[i].getValue();
+                Map<String, String> header = params[i].getHeader();
+                System.out.printf("Command: %s %s %s %s\n", url, name, value, header);
 
-                if (header != null) {
-                    for (String key : header.keySet())
-                        post.setHeader(key, header.get(key));
-                }
+                try {
+                    HttpPost post = new HttpPost(url);
 
-                HttpEntity formEntity = null;
-                if (params[0].isJson()) {
-                    formEntity = new StringEntity(value);
-                } else {
-                    List<NameValuePair> parameters = new ArrayList<NameValuePair>();
-                    parameters.add(new BasicNameValuePair(name, value));
-                    formEntity = new UrlEncodedFormEntity(parameters, HTTP.UTF_8);
-                }
-                post.setEntity(formEntity);
+                    if (header != null) {
+                        for (String key : header.keySet())
+                            post.setHeader(key, header.get(key));
+                    }
 
-                client.execute(post);
+                    HttpEntity formEntity = null;
+                    if (params[i].isJson()) {
+                        formEntity = new StringEntity(value);
+                    } else {
+                        List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+                        parameters.add(new BasicNameValuePair(name, value));
+                        formEntity = new UrlEncodedFormEntity(parameters, HTTP.UTF_8);
+                    }
+                    post.setEntity(formEntity);
+
+                    formEntity = client.execute(post).getEntity();
+
+                    // If it's a macro (chained command), process results
+//                    String str = EntityUtils.toString(formEntity);
+//                    JSONObject json = new JSONObject(str);
+//                    json = json.getJSONObject("result").getJSONObject("movies");
+//                    System.out.println(json.getString("movieid"));
+
 //                publishProgress((int) ((i / (float) count) * 100));
-            } catch (IOException e) {
-                e.printStackTrace();
-                status = new Long("-1");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    status = new Long("-1");
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                    status = new Long("-1");
+                }
             }
 //
 //        // Escape early if cancel() is called
