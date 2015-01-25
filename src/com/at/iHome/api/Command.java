@@ -14,10 +14,10 @@ public class Command {
     private String url;
     private String name;
     private String value;
-    private String type;
+    private String type, response;
     private Map<String, String> header;
 
-    private boolean chained = false;
+    private boolean chained = false, view = false;
 	protected ResponseProcessor responseProcessor;
 
     public Command(String uri, String name, String value) {
@@ -78,7 +78,6 @@ public class Command {
         this.value = value;
     }
 
-
     public boolean isJson() {
         return APPLICATION_JSON.equals(type);
     }
@@ -86,6 +85,20 @@ public class Command {
     public void setType(String type) {
         this.type = type;
     }
+
+	/**
+	 * @return the response
+	 */
+	public String getResponse() {
+		return response;
+	}
+
+	/**
+	 * @param response the response to set
+	 */
+	public void setResponse(String response) {
+		this.response = response;
+	}
 
 	/**
 	 * @return the chained
@@ -113,6 +126,20 @@ public class Command {
 	 */
 	public void setResponseProcessor(ResponseProcessor responseProcessor) {
 		this.responseProcessor = responseProcessor;
+	}
+
+	/**
+	 * @return the view
+	 */
+	public boolean isView() {
+		return view;
+	}
+
+	/**
+	 * @param view the view to set
+	 */
+	public void setView(boolean view) {
+		this.view = view;
 	}
 
 }

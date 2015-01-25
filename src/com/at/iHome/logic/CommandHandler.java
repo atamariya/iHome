@@ -32,6 +32,12 @@ public class CommandHandler {
 		device.setContext(new Context("1"));
 		devices.put("xbmc", device);
 		devices.put("play", device);
+		
+		device = new IPCam("ipcam", "192.168.0.35");
+		device.setContext(new Context("1"));
+		device.setUsername("guest");
+		device.setPassword("passw0rd");
+		devices.put("show", device);
 
 		// devices
 		synonyms.put("watch", "play");
@@ -59,7 +65,6 @@ public class CommandHandler {
 		if (cmd == null)
 			return chain;
 
-
 		cmd = getSynonym(cmd);
 		String[] tokens = cmd.split(" ");
 		int i = 0; // token position
@@ -78,7 +83,7 @@ public class CommandHandler {
 				}
 			}
 		} else {
-			// Macro for devices not supported yet
+			// Macro for devices is not supported yet
 			Device device = devices.get(token);
 			if (device != null && tokens.length > 1) {
 				token = getSynonym(tokens[i++]);
@@ -121,7 +126,7 @@ public class CommandHandler {
 	public static void main(String args[]) {
 		String cmd[] = new String[] {
 		// "play internet radio",
-		"play song no matter what",
+//		"play song no matter what",
 		// "play song", "play movie twilight",
 
 		// Notification requires two arguments. Have to figure out how to parse
@@ -139,6 +144,7 @@ public class CommandHandler {
 		// "all lights on", "all lights off",
 		// "let there be light",
 		// "play", "pause",
+				"show cam one"
 		};
 		Context context = new Context("1");
 		List<Command> chain = new ArrayList<Command>();

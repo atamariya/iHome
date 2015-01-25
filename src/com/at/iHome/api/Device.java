@@ -1,22 +1,24 @@
 package com.at.iHome.api;
 
+import android.util.Base64;
+
+import com.at.iHome.logic.CommandHandler;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.at.iHome.logic.CommandHandler;
 
 /**
  * Created by Anand.Tamariya on 18-Jan-15.
  */
 abstract public class Device {
 	protected String uri;
-	protected String CMD;
+	protected String CMD, paramTemplate;
     protected List<String> params;
 
     protected Map<String, String> commands = new HashMap<String, String>();
-	protected String host, url, name;
+	protected String host, url, name, username, password;
 	protected String scheme = "http://";
 
 	/**
@@ -69,6 +71,12 @@ abstract public class Device {
 		String param = commands.get(commandName);
 		if (param != null) {
 			cmd = new Command(url, CMD, param);
+			
+			if (username != null && password != null) {
+				String header = "Basic " + Base64.encodeToString(
+                        (username + ":" + password).getBytes(), Base64.DEFAULT);
+				cmd.setHeader("Authorization", header);
+			}
 		}
 
 		return cmd;
@@ -113,5 +121,47 @@ abstract public class Device {
         this.params = new ArrayList<String>();
         this.params.add(params);
     }
+
+	/**
+	 * @return the paramTemplate
+	 */
+	public String getParamTemplate() {
+		return paramTemplate;
+	}
+
+	/**
+	 * @param paramTemplate the paramTemplate to set
+	 */
+	public void setParamTemplate(String paramTemplate) {
+		this.paramTemplate = paramTemplate;
+	}
+
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+
+	/**
+	 * @param password the password to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
 
 }

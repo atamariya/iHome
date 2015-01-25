@@ -1,9 +1,10 @@
-package info.androidhive.speechtotext;
+package com.ihome;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -12,6 +13,9 @@ import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.view.Menu;
 import android.view.View;
+import android.webkit.HttpAuthHandler;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -33,9 +37,12 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import info.androidhive.speechtotext.R;
 
 public class MainActivity extends Activity {
 
@@ -145,8 +152,21 @@ public class MainActivity extends Activity {
                         progressDialog.setVisibility(View.VISIBLE);
                         msg = "Command successful";
 
-//                    for (Command command : commands)
-//                      new NetTask().execute(command);
+                        for (Iterator<Command> iter = commands.iterator(); iter.hasNext(); ) {
+                            Command command = iter.next();
+                            if (command.isView()) {
+                                // Streaming doesn't work with webview
+                                Uri uri = Uri.parse(command.getUrl());
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//                                Bundle bundle = new Bundle();
+//                                bundle.putString("Authorization", "Basic " + authorizationBase64);
+//                                i.putExtra(Browser.EXTRA_HEADERS, bundle);
+                                startActivity(intent);
+
+                                iter.remove();
+                            }
+                        }
+
                         new NetTask().execute(commands.toArray(new Command[commands.size()]));
                     } else speakText("I don't understand the command " + str);
                 }
@@ -167,8 +187,8 @@ public class MainActivity extends Activity {
         protected Long doInBackground(Command... params) {
             Long status = new Long(0);
             AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
-            for (int i = 0; i < params.length && status != new Long("-1"); i++) {
-                String url = params[i].getUrl();
+            for (int i = 0; i < params.length && status != new Long("-1") && !isCancelled(); i++) {
+                final String url = params[i].getUrl();
                 String name = params[i].getName();
                 String value = params[i].getValue();
                 Map<String, String> header = params[i].getHeader();
@@ -198,13 +218,10 @@ public class MainActivity extends Activity {
                     String str = EntityUtils.toString(formEntity);
                     if (params[i].isChained()) {
                         params[i + 1].setValue(params[i + 1].getResponseProcessor().process(str));
-                    } else if (params[i].isJson()) {
+                    } else if (params[i].getResponseProcessor() != null) {
                         params[i].getResponseProcessor().process(str);
                     }
 //                publishProgress((int) ((i / (float) count) * 100));
-//        // Escape early if cancel() is called
-                    if (isCancelled())
-                        break;
                 } catch (IOException e) {
                     e.printStackTrace();
                     status = new Long("-1");
