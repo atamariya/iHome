@@ -14,6 +14,9 @@ import android.speech.tts.TextToSpeech;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.HttpAuthHandler;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 
 import com.at.iHome.api.Command;
 import com.at.iHome.logic.CommandHandler;
+import com.ihome.BrowserActivity;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -97,7 +101,7 @@ public class MainActivity extends Activity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 processCommand(query);
-                return false;
+                return true;
             }
 
             @Override
@@ -189,6 +193,11 @@ public class MainActivity extends Activity {
 //                                i.putExtra(Browser.EXTRA_HEADERS, bundle);
                     startActivity(intent);
 
+                    iter.remove();
+                }
+                if (command.isSetting()) {
+                    txtSpeechInput.setText(String.format("%s %s %d", command.getName(), command.getValue(),
+                            wifiManager.getConnectionInfo().getRssi()));
                     iter.remove();
                 }
             }

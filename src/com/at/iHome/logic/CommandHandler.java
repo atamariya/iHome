@@ -39,6 +39,10 @@ public class CommandHandler {
 		device.setPassword("passw0rd");
 		devices.put("show", device);
 
+        device = new SettingsCmd("settings");
+        device.setContext(new Context("1"));
+        devices.put("set", device);
+
 		// devices
 		synonyms.put("watch", "play");
 		synonyms.put("media", "play");

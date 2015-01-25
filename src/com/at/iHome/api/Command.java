@@ -17,7 +17,7 @@ public class Command {
     private String type, response;
     private Map<String, String> header;
 
-    private boolean chained = false, view = false;
+    private boolean chained = false, view = false, setting = false;
 	protected ResponseProcessor responseProcessor;
 
     public Command(String uri, String name, String value) {
@@ -140,6 +140,20 @@ public class Command {
 	 */
 	public void setView(boolean view) {
 		this.view = view;
+	}
+
+	/**
+	 * @return the setting
+	 */
+	public boolean isSetting() {
+		return setting;
+	}
+
+	/**
+	 * @param setting the setting to set
+	 */
+	public void setSetting(boolean setting) {
+		this.setting = setting;
 	}
 
 }
