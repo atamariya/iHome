@@ -12,18 +12,16 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.webkit.HttpAuthHandler;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.at.iHome.api.Command;
 import com.at.iHome.logic.CommandHandler;
-import com.ihome.BrowserActivity;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -89,6 +87,25 @@ public class MainActivity extends Activity {
         progressDialog.setVisibility(View.GONE);
 
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+
+        SearchView searchView = (SearchView) findViewById(R.id.searchView);
+        searchView.setSubmitButtonEnabled(true);
+        searchView.setQueryHint(getString(R.string.search_hint));
+        searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                processCommand(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
     }
 
     public void speakText(String toSpeak) {
@@ -145,30 +162,7 @@ public class MainActivity extends Activity {
                     String str = result.get(0);
                     txtSpeechInput.setText(str);
 
-                    com.at.iHome.api.Context context = new com.at.iHome.api.Context("1");
-                    List<Command> commands = CommandHandler.getInstance().execute(context, str);
-                    int count = commands.size();
-                    if (count > 0) {
-                        progressDialog.setVisibility(View.VISIBLE);
-                        msg = "Command successful";
-
-                        for (Iterator<Command> iter = commands.iterator(); iter.hasNext(); ) {
-                            Command command = iter.next();
-                            if (command.isView()) {
-                                // Streaming doesn't work with webview
-                                Uri uri = Uri.parse(command.getUrl());
-                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-//                                Bundle bundle = new Bundle();
-//                                bundle.putString("Authorization", "Basic " + authorizationBase64);
-//                                i.putExtra(Browser.EXTRA_HEADERS, bundle);
-                                startActivity(intent);
-
-                                iter.remove();
-                            }
-                        }
-
-                        new NetTask().execute(commands.toArray(new Command[commands.size()]));
-                    } else speakText("I don't understand the command " + str);
+                    processCommand(str);
                 }
                 break;
             }
@@ -176,11 +170,49 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void processCommand(String str) {
+        com.at.iHome.api.Context context = new com.at.iHome.api.Context("1");
+        List<Command> commands = CommandHandler.getInstance().execute(context, str);
+        int count = commands.size();
+        if (count > 0) {
+            progressDialog.setVisibility(View.VISIBLE);
+            msg = "Command successful";
+
+            for (Iterator<Command> iter = commands.iterator(); iter.hasNext(); ) {
+                Command command = iter.next();
+                if (command.isView()) {
+                    // Streaming doesn't work with webview
+                    Uri uri = Uri.parse(command.getUrl());
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//                                Bundle bundle = new Bundle();
+//                                bundle.putString("Authorization", "Basic " + authorizationBase64);
+//                                i.putExtra(Browser.EXTRA_HEADERS, bundle);
+                    startActivity(intent);
+
+                    iter.remove();
+                }
+            }
+
+            new NetTask().execute(commands.toArray(new Command[commands.size()]));
+        } else speakText("I don't understand the command " + str);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+//            case R.id.action_search:
+//                speakText("searching");
+//                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     class NetTask extends AsyncTask<Command, Void, Long> {
