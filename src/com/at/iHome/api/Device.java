@@ -163,4 +163,7 @@ abstract public class Device {
 		this.username = username;
 	}
 
+    public String getName() {
+        return name;
+    }
 }

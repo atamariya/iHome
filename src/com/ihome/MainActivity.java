@@ -204,7 +204,7 @@ public class MainActivity extends Activity {
 
         // No zone created yet.
         if (context.getName() == null) {
-            context = null;
+            context = com.at.iHome.api.Context.DEFAULT_CONTEXT;
         }
 
         List<Command> commands = CommandHandler.getInstance().execute(context, str);

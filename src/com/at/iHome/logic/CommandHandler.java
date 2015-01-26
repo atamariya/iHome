@@ -158,6 +158,13 @@ public class CommandHandler {
 		for (Command command : chain) {
 			System.out.println(command);
 		}
+		
+//		context.setName("2");
+		context = Context.DEFAULT_CONTEXT;
+		List<Device> list =  CommandHandler.getInstance().getDevices(context);
+		for (Device device : list) {
+			System.out.println(device);
+		}
 	}
 
 	/**
@@ -169,4 +176,14 @@ public class CommandHandler {
 			cmd = name.replace("lights", "light");
 		return cmd == null ? name : cmd;
 	}
+
+    public List<Device> getDevices(Context context) {
+        List<Device> list = new ArrayList<Device>();
+        for (Device device : devices.values()) {
+            if (device.getContext() != null && device.getContext().equals(context))
+                list.add(device);
+        }
+
+        return list;
+    }
 }

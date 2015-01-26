@@ -4,6 +4,8 @@ public class Context {
     private String name;
     private int rssi, range;
 
+    public static final Context DEFAULT_CONTEXT = new Context("default");
+
     public Context(String name) {
         this.name = name;
     }
@@ -22,22 +24,25 @@ public class Context {
     public boolean equals(Object obj) {
         boolean result = false;
 
-        if (obj == null) {
-            // Case when zone is not created yet.
-            result = true;
-        } else if (obj instanceof Context) {
+        if (obj != null && obj instanceof Context) {
             Context that = (Context) obj;
-            if ((name != null && name.equals(that.getName()))
-                    // Case when zone is not created yet.
-                    || that.getName() == null
-                    || (rssi == that.getRssi())
+            if ((name != null && that.getName() != null && name.trim().equals(that.getName().trim()))
+                    || ((rssi == that.getRssi()) && rssi != 0)
                     || ((rssi + range > that.getRssi()) &&
-                    (rssi - range < that.getRssi()))) {
+                    (rssi - range < that.getRssi()))
+                    || (that == DEFAULT_CONTEXT)
+                    || (this == DEFAULT_CONTEXT)
+                    ) {
                 result = true;
             }
         }
 
         return result;
+    }
+    
+    @Override
+    public String toString() {
+    	return name;
     }
 
     public String getName() {
