@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.at.iHome.api.Command;
 import com.at.iHome.logic.CommandHandler;
 import com.at.ihome.R;
+import com.ihome.zones.ZonesActivity;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -121,6 +122,17 @@ public class MainActivity extends Activity {
 
     private void browseDevices() {
         Intent intent = new Intent(this, BrowserActivity.class);
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.errorSwitchingRouter),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void modifyZones() {
+        Intent intent = new Intent(this, ZonesActivity.class);
         try {
             startActivity(intent);
         } catch (ActivityNotFoundException a) {
@@ -240,9 +252,9 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-//            case R.id.action_search:
-//                speakText("searching");
-//                return true;
+            case R.id.action_settings:
+                modifyZones();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="info.androidhive.speechtotext"
+    package="com.at.ihome"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -31,6 +31,7 @@
         <activity android:name="com.ihome.BrowserActivity">
 
         </activity>
+        <activity android:name="com.ihome.zones.ZonesActivity"/>
 
         <service android:name="org.fourthline.cling.android.AndroidUpnpServiceImpl"/>
 
