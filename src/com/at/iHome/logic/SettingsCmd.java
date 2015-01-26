@@ -7,7 +7,7 @@ public class SettingsCmd extends Device {
 
 	public SettingsCmd(String name) {
 		super(name, null);
-		
+
 		commands.put("zone", "zone");
 	}
 	

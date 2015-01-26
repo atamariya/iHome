@@ -37,15 +37,14 @@ abstract public class Device {
 	public List<Command> execute(Context ctx, String cmd) {
 		System.out.printf("device: %s %s\n", name, host);
 		List<Command> chain = new ArrayList<Command>();
-		if (!context.equals(ctx)) {
-			return chain;
-		}
-
 		if (isAll()) {
 			chain.addAll(executeAll(cmd));
 		} else {
+            if (context != null && !context.equals(ctx)) {
+                return chain;
+            }
 
-			Command command = getCommand(CommandHandler.getInstance()
+            Command command = getCommand(CommandHandler.getInstance()
 					.getSynonym(cmd));
 			if (command != null) {
 				// command.doInBackground(scheme + host);

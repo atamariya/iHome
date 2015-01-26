@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.net.wifi.WifiManager;
@@ -14,9 +15,6 @@ import android.speech.tts.TextToSpeech;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.HttpAuthHandler;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -25,7 +23,7 @@ import android.widget.Toast;
 
 import com.at.iHome.api.Command;
 import com.at.iHome.logic.CommandHandler;
-import com.ihome.BrowserActivity;
+import com.at.ihome.R;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
@@ -44,11 +42,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import info.androidhive.speechtotext.R;
 
 public class MainActivity extends Activity {
 
-    private TextView txtSpeechInput;
+    private TextView txtSpeechInput, zoneText;
     private ImageButton btnSpeak;
     private final int REQ_CODE_SPEECH_INPUT = 100;
 
@@ -64,6 +61,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
+        zoneText = (TextView) findViewById(R.id.zoneTxt);
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
 
         // hide the action bar
@@ -175,7 +173,28 @@ public class MainActivity extends Activity {
     }
 
     private void processCommand(String str) {
-        com.at.iHome.api.Context context = new com.at.iHome.api.Context("1");
+        // Determine zone context
+        int rssi = wifiManager.getConnectionInfo().getRssi();
+        SharedPreferences sharedPref = getSharedPreferences("range", Context.MODE_PRIVATE);
+        int range = sharedPref.getInt("range", 5);
+
+        sharedPref = getSharedPreferences("zones", Context.MODE_PRIVATE);
+        Map<String, ?> zones = sharedPref.getAll();
+        com.at.iHome.api.Context context = new com.at.iHome.api.Context(rssi, range);
+        for (String name : zones.keySet()) {
+            com.at.iHome.api.Context context1 = new com.at.iHome.api.Context(name, sharedPref.getInt(name, 0));
+            if (context.equals(context1)) {
+                context.setName(name);
+                zoneText.setText("Zone: " + name);
+                break;
+            }
+        }
+
+        // No zone created yet.
+        if (context.getName() == null) {
+            context = null;
+        }
+
         List<Command> commands = CommandHandler.getInstance().execute(context, str);
         int count = commands.size();
         if (count > 0) {
@@ -197,7 +216,12 @@ public class MainActivity extends Activity {
                 }
                 if (command.isSetting()) {
                     txtSpeechInput.setText(String.format("%s %s %d", command.getName(), command.getValue(),
-                            wifiManager.getConnectionInfo().getRssi()));
+                            rssi));
+
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putInt(command.getValue(), rssi);
+                    editor.commit();
+
                     iter.remove();
                 }
             }
