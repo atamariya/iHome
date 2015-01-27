@@ -9,10 +9,11 @@ import java.util.Map;
 import com.at.iHome.api.Command;
 import com.at.iHome.api.Context;
 import com.at.iHome.api.Device;
+import com.at.iHome.api.Group;
 
 public class CommandHandler {
 	private static CommandHandler instance = new CommandHandler();
-	private Map<String, Device> devices = new HashMap<String, Device>();
+	private Map<String, Group> devices = new HashMap<String, Group>();
 	/**
 	 * Map of <common word, command>.
 	 */
@@ -20,31 +21,33 @@ public class CommandHandler {
 
 	public CommandHandler() {
 		Device device = new DenonAVR("avr", "192.168.0.44");
-		device.setContext(new Context("1"));
-		devices.put("play", device);
-		devices.put("denon", device);
+		device.setContext(new Context("2"));
+		addDevice("denon", device);
 
 		device = new LightControl("53ff71066667574819442167");
 		device.setContext(new Context("2"));
-		devices.put("light", device);
+		addDevice("light", device);
 
 		device = new XBMC("xbmc", "192.168.0.26");
-		device.setContext(new Context("1"));
-		devices.put("xbmc", device);
-		devices.put("play", device);
-		
+		device.setContext(new Context("2"));
+        addDevice("xbmc", device);
+
 		device = new IPCam("ipcam", "192.168.0.35");
 		device.setContext(new Context("1"));
 		device.setUsername("guest");
 		device.setPassword("passw0rd");
-		devices.put("show", device);
+		addDevice("show", device);
 
-        device = new SettingsCmd("settings");
-        devices.put("set", device);
+		device = new SettingsCmd("settings");
+		addDevice("set", device);
 
 		// devices
-		synonyms.put("watch", "play");
-		synonyms.put("media", "play");
+		synonyms.put("watch", "denon");
+		synonyms.put("media", "denon");
+		synonyms.put("play", "denon");
+
+        synonyms.put("open", "xbmc");
+        synonyms.put("search", "xbmc");
 
 		// mis-spelling
 		synonyms.put("of", "off");
@@ -54,9 +57,22 @@ public class CommandHandler {
 		synonyms.put("resume", "play");
 		synonyms.put("mute", "volume mute");
 		synonyms.put("unmute", "volume unmute");
-		synonyms.put("song", "search song,open song");
-		synonyms.put("movie", "search movie,open movie");
-		// synonyms.put("play", "xbmc, denon");
+
+        // works only for xbmc
+//		synonyms.put("song", "search song,open song");
+//		synonyms.put("movie", "search movie,open movie");
+	}
+
+	public void addDevice(String group, Device device) {
+		Group groupDevice;
+		if (devices.containsKey(group)) {
+			groupDevice = (Group) devices.get(group);
+		} else {
+			groupDevice = new Group(group);
+		}
+		groupDevice.setAudioDevice(device.isAudioDevice());
+		groupDevice.addDevice(device);
+		devices.put(group, groupDevice);
 	}
 
 	public static CommandHandler getInstance() {
@@ -128,27 +144,29 @@ public class CommandHandler {
 
 	public static void main(String args[]) {
 		String cmd[] = new String[] {
-		// "play internet radio",
-//		"play song no matter what",
+		// TODO "play internet radio",
+
+		// Only for XBMC (supports playback control)
+		// "play", "pause",
+		// "play song no matter what",
 		// "play song", "play movie twilight",
 
 		// Notification requires two arguments. Have to figure out how to parse
 		// that from input.
-		// "play notify message"
+		// TODO "play notify message"
 
-		// "play song no matter what on youtube",
-		// "lights on", "lights off",
+		// TODO "play song no matter what on youtube",
 		// "play tv", "play radio", "play game", "play movie",
 		// "volume up", "volume down", "volume mute", "volume unmute",
 
 		// Ensure that executeAll() is implemented for appropriate devices
 		// "all on", "all off",
 
+		// "lights on", "lights off",
 		// "all lights on", "all lights off",
 		// "let there be light",
-		// "play", "pause",
-				"show cam one"
-		};
+
+		"show cam one" };
 		Context context = new Context("1");
 		List<Command> chain = new ArrayList<Command>();
 		for (String string : cmd) {
@@ -158,10 +176,10 @@ public class CommandHandler {
 		for (Command command : chain) {
 			System.out.println(command);
 		}
-		
-//		context.setName("2");
+
+		// context.setName("2");
 		context = Context.DEFAULT_CONTEXT;
-		List<Device> list =  CommandHandler.getInstance().getDevices(context);
+		List<Device> list = CommandHandler.getInstance().getDevices(context);
 		for (Device device : list) {
 			System.out.println(device);
 		}
@@ -177,13 +195,15 @@ public class CommandHandler {
 		return cmd == null ? name : cmd;
 	}
 
-    public List<Device> getDevices(Context context) {
-        List<Device> list = new ArrayList<Device>();
-        for (Device device : devices.values()) {
-            if (device.getContext() != null && device.getContext().equals(context))
-                list.add(device);
-        }
+	public List<Device> getDevices(Context context) {
+		List<Device> list = new ArrayList<Device>();
+		for (Group group : devices.values()) {
+			for (Device device : group.getDevices())
+				if (device.getContext() != null
+						&& device.getContext().equals(context))
+					list.add(device);
+		}
 
-        return list;
-    }
+		return list;
+	}
 }

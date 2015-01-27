@@ -25,7 +25,9 @@ abstract public class Device {
 	 * Used for "all lights off/ all off" scenario
 	 */
 	protected boolean all = false;
+	protected boolean lightControl, audioDevice;
 
+	/** Logical devices (e.g. SettingsCmd) must not have a context. It is only meant for physical devices. */
 	protected Context context;
 
 	public Device(String name, String host) {
@@ -41,7 +43,7 @@ abstract public class Device {
 			chain.addAll(executeAll(cmd));
 		} else {
             if (context != null && !context.equals(ctx)) {
-                return chain;
+                throw new ZoneException();
             }
 
             Command command = getCommand(CommandHandler.getInstance()
@@ -80,9 +82,19 @@ abstract public class Device {
 
 		return cmd;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		boolean result = false;
+		
+		if (obj != null) {
+			result = host.equals(((Device)obj).host);
+		}
+		return result;
+	}
 
 	public boolean isAudioDevice() {
-		return false;
+		return this.audioDevice;
 	}
 
 	public boolean isLightControl() {
@@ -166,4 +178,18 @@ abstract public class Device {
     public String getName() {
         return name;
     }
+
+	/**
+	 * @param lightControl the lightControl to set
+	 */
+	public void setLightControl(boolean lightControl) {
+		this.lightControl = lightControl;
+	}
+
+	/**
+	 * @param audioDevice the audioDevice to set
+	 */
+	public void setAudioDevice(boolean audioDevice) {
+		this.audioDevice = audioDevice;
+	}
 }

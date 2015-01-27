@@ -99,7 +99,7 @@ public class ZonesActivity extends Activity {
 			}
 		});
 
-        if (listDataHeader.size() == 1)
+        if (listDataHeader.size() > 0)
             expListView.expandGroup(0, true);
 	}
 
@@ -114,7 +114,7 @@ public class ZonesActivity extends Activity {
         SharedPreferences sharedPref = getSharedPreferences("range", Context.MODE_PRIVATE);
         int range = sharedPref.getInt("range", 5);
 
-        sharedPref = getSharedPreferences("zones1", Context.MODE_PRIVATE);
+        sharedPref = getSharedPreferences("zones", Context.MODE_PRIVATE);
         Map<String, ?> zones = sharedPref.getAll();
         int i = 0;
         for (String name : zones.keySet()) {

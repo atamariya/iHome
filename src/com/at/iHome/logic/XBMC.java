@@ -136,7 +136,7 @@ public class XBMC extends Device {
 			});
             try {
                 cmd.setValue(cmd.getResponseProcessor().process(null));
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

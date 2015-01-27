@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.at.iHome.api.Command;
+import com.at.iHome.api.ZoneException;
 import com.at.iHome.logic.CommandHandler;
 import com.at.ihome.R;
 import com.ihome.zones.ZonesActivity;
@@ -207,7 +208,14 @@ public class MainActivity extends Activity {
             context = com.at.iHome.api.Context.DEFAULT_CONTEXT;
         }
 
-        List<Command> commands = CommandHandler.getInstance().execute(context, str);
+        List<Command> commands = null;
+        try {
+            commands = CommandHandler.getInstance().execute(context, str);
+        } catch (ZoneException e) {
+            speakText("Device is in a different zone");
+            return;
+        }
+
         int count = commands.size();
         if (count > 0) {
             progressDialog.setVisibility(View.VISIBLE);
@@ -299,10 +307,7 @@ public class MainActivity extends Activity {
                         params[i].getResponseProcessor().process(str);
                     }
 //                publishProgress((int) ((i / (float) count) * 100));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    status = new Long("-1");
-                } catch (JSONException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     status = new Long("-1");
                 }
