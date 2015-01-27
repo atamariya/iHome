@@ -66,8 +66,12 @@ public class Context {
         this.range = range;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    /**
+     * Be wary of using this method. You don't want to assign a name to default context.
+     * @param name
+     */
+//    public void setName(String name) {
+//        this.name = name;
+//    }
 
 }

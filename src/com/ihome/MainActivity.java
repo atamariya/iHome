@@ -196,7 +196,7 @@ public class MainActivity extends Activity {
         for (String name : zones.keySet()) {
             com.at.iHome.api.Context context1 = new com.at.iHome.api.Context(name, sharedPref.getInt(name, 0));
             if (context.equals(context1)) {
-                context.setName(name);
+                context = new com.at.iHome.api.Context(name);
                 zoneText.setText("Zone: " + name);
                 break;
             }
