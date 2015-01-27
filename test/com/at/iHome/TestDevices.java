@@ -11,6 +11,7 @@ import com.at.iHome.api.Command;
 import com.at.iHome.api.Context;
 import com.at.iHome.api.Device;
 import com.at.iHome.logic.CommandHandler;
+import com.at.iHome.logic.DenonAVR;
 
 public class TestDevices {
 
@@ -55,6 +56,12 @@ public class TestDevices {
 		chain = CommandHandler.getInstance().execute(context, string);
 		assertEquals(1, chain.size());
 		System.out.println(chain);
+
+        // synonyms test
+        string = "watch tv"; //"play tv", "play radio", "play game", "play movie",
+        chain = CommandHandler.getInstance().execute(context, string);
+        assertEquals(1, chain.size());
+        System.out.println(chain);
 		
 		string = "volume up"; //"volume up", "volume down", "volume mute", "volume unmute",
 		chain = CommandHandler.getInstance().execute(context, string);
@@ -75,4 +82,27 @@ public class TestDevices {
 		assertEquals(1, list.size());
 	}
 
+	@Test
+	public void testDeviceAdd() {
+		CommandHandler handler = CommandHandler.getInstance();
+		Context context = new Context("3");
+
+		Device device = new DenonAVR("avr", "192.168.0.45");
+		device.setContext(context);
+		handler.addDevice("denon", device);
+		
+		device = new DenonAVR("avr", "192.168.0.45");
+		device.setContext(new Context("3"));
+		handler.addDevice("denon", device);
+		
+		List<Device> list = handler.getDevices(context);
+		assertEquals(1, list.size());
+		
+		device = new DenonAVR("avr", "192.168.0.46");
+		device.setContext(new Context("3"));
+		handler.addDevice("denon", device);
+		
+		list = CommandHandler.getInstance().getDevices(context);
+		assertEquals(2, list.size());
+	}
 }

@@ -22,7 +22,7 @@ public class CommandHandler {
 	public CommandHandler() {
 		Device device = new DenonAVR("avr", "192.168.0.44");
 		device.setContext(new Context("2"));
-		addDevice("denon", device);
+		addDevice("play", device);
 
 		device = new LightControl("53ff71066667574819442167");
 		device.setContext(new Context("2"));
@@ -30,7 +30,7 @@ public class CommandHandler {
 
 		device = new XBMC("xbmc", "192.168.0.26");
 		device.setContext(new Context("2"));
-        addDevice("xbmc", device);
+        addDevice("play", device);
 
 		device = new IPCam("ipcam", "192.168.0.35");
 		device.setContext(new Context("1"));
@@ -42,9 +42,8 @@ public class CommandHandler {
 		addDevice("set", device);
 
 		// devices
-		synonyms.put("watch", "denon");
-		synonyms.put("media", "denon");
-		synonyms.put("play", "denon");
+		synonyms.put("watch", "play");
+		synonyms.put("media", "play");
 
         synonyms.put("open", "xbmc");
         synonyms.put("search", "xbmc");
@@ -59,8 +58,8 @@ public class CommandHandler {
 		synonyms.put("unmute", "volume unmute");
 
         // works only for xbmc
-//		synonyms.put("song", "search song,open song");
-//		synonyms.put("movie", "search movie,open movie");
+		synonyms.put("song", "search song,open song");
+		synonyms.put("movie", "search movie,open movie");
 	}
 
 	public void addDevice(String group, Device device) {
@@ -102,10 +101,11 @@ public class CommandHandler {
 				}
 			}
 		} else {
-			// Macro for devices is not supported yet
 			Device device = devices.get(token);
 			if (device != null && tokens.length > 1) {
-				token = getSynonym(tokens[i++]);
+                // Don't expand macro here
+//				token = getSynonym(tokens[i++]);
+                token = (tokens[i++]);
 				StringBuilder tmp = new StringBuilder();
 				for (int j = i; j < tokens.length; j++) {
 					tmp.append(tokens[j]).append(" ");

@@ -23,6 +23,7 @@ public class Group extends Device {
 		List<Command> commands = new ArrayList<Command>();
 		for (Device device : devices) {
 			device.setAll(isAll());
+			device.setParams(getParams());
 			commands.addAll(device.execute(ctx, cmd));
 		}
 		return commands;
@@ -36,7 +37,7 @@ public class Group extends Device {
 	}
 
 	/**
-	 * @param devices the devices to set
+	 * @param device the devices to set
 	 */
 	public void addDevice(Device device) {
 		if (!devices.contains(device))
