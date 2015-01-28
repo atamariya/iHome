@@ -206,4 +206,14 @@ public class CommandHandler {
 
 		return list;
 	}
+
+    public void setDeviceContext(String name, Context context) {
+        for (Group group : devices.values()) {
+            for (Device device : group.getDevices())
+                if (device.getName().equals(name)) {
+                    device.setContext(context);
+                    return;
+                }
+        }
+    }
 }

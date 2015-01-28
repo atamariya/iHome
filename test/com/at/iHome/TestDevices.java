@@ -79,7 +79,7 @@ public class TestDevices {
 
 		context = new Context("2");
 		list = CommandHandler.getInstance().getDevices(context);
-		assertEquals(1, list.size());
+		assertEquals(2, list.size());
 	}
 
 	@Test

@@ -92,6 +92,10 @@ public class ZonesActivity extends Activity {
                         editSelectedItems();
                         mode.finish(); // Action picked, so close the CAB
                         return true;
+                    case R.id.action_add:
+                        addDevice();
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
                     default:
                         return false;
                 }
@@ -124,15 +128,25 @@ public class ZonesActivity extends Activity {
         });
     }
 
+    private void addDevice() {
+
+    }
+
     private void deleteSelectedItems() {
-        SharedPreferences sharedPref = getSharedPreferences("zones", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
         if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
             // delete group
+            SharedPreferences sharedPref = getSharedPreferences("zones", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+
             String zone = listDataHeader.get(groupPosition);
             editor.remove(zone.split(" ")[1]);
+            editor.commit();
         }
-        editor.commit();
+        if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+            // set device context to default
+            CommandHandler.getInstance().setDeviceContext((String) listAdapter.getChild(groupPosition, childPosition),
+                    com.at.iHome.api.Context.DEFAULT_CONTEXT);
+        }
         prepareListData();
         listAdapter.update(listDataHeader, listDataChild);
     }

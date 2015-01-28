@@ -31,7 +31,10 @@ public class Context {
                     || ((rssi + range > that.getRssi()) &&
                     (rssi - range < that.getRssi()))
                     || (that == DEFAULT_CONTEXT)
-                    || (this == DEFAULT_CONTEXT)
+                    /* Generally all contexts are equal to default context; but default context is
+                    ONLY equal to another default context instance
+                     */
+//                    || (this == DEFAULT_CONTEXT)
                     ) {
                 result = true;
             }
