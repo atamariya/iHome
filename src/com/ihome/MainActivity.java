@@ -1,6 +1,7 @@
 package com.ihome;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import com.at.iHome.api.Command;
 import com.at.iHome.api.ZoneException;
 import com.at.iHome.logic.CommandHandler;
 import com.at.ihome.R;
+import com.ihome.zones.ZoneOverrideDialog;
 import com.ihome.zones.ZonesActivity;
 
 import org.apache.http.HttpEntity;
@@ -54,7 +56,7 @@ public class MainActivity extends Activity {
     private TextToSpeech ttobj;
     private ProgressBar progressDialog;
     private String msg;
-
+    private SearchView searchView;
     private WifiManager wifiManager;
 
     @Override
@@ -92,7 +94,7 @@ public class MainActivity extends Activity {
 
         wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
-        SearchView searchView = (SearchView) findViewById(R.id.searchView);
+        searchView = (SearchView) findViewById(R.id.searchView);
         searchView.setSubmitButtonEnabled(true);
         searchView.setQueryHint(getString(R.string.search_hint));
         searchView.setIconifiedByDefault(false); // Do not iconify the widget; expand it by default
@@ -175,7 +177,8 @@ public class MainActivity extends Activity {
                     List<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String str = result.get(0);
-                    txtSpeechInput.setText(str);
+                    //txtSpeechInput.setText(str);
+                    searchView.setQuery(str, false);
 
                     processCommand(str);
                 }
@@ -185,7 +188,11 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void processCommand(String str) {
+    public void processCommand(String str) {
+        processCommand(str, false);
+    }
+
+    public void processCommand(String str, boolean useDefaultContext) {
         // Determine zone context
         int rssi = wifiManager.getConnectionInfo().getRssi();
         SharedPreferences sharedPref = getSharedPreferences("range", Context.MODE_PRIVATE);
@@ -204,15 +211,22 @@ public class MainActivity extends Activity {
         }
 
         // No zone created yet.
-        if (context.getName() == null) {
+        if (context.getName() == null || useDefaultContext) {
             context = com.at.iHome.api.Context.DEFAULT_CONTEXT;
         }
-
         List<Command> commands = null;
         try {
             commands = CommandHandler.getInstance().execute(context, str);
         } catch (ZoneException e) {
-            speakText("Device is in a different zone");
+            speakText(getString(R.string.override_prompt));
+            DialogFragment dialog = new ZoneOverrideDialog();
+
+            Bundle args = new Bundle();
+            args.putString("cmd", str);
+            dialog.setArguments(args);
+
+            dialog.show(getFragmentManager(), "tag");
+
             return;
         }
 
@@ -307,6 +321,9 @@ public class MainActivity extends Activity {
                         params[i].getResponseProcessor().process(str);
                     }
 //                publishProgress((int) ((i / (float) count) * 100));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    msg = "Device unavailable";
                 } catch (Exception e) {
                     e.printStackTrace();
                     status = new Long("-1");

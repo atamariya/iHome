@@ -29,6 +29,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.at.ihome.R;
+
 import org.fourthline.cling.android.AndroidUpnpService;
 import org.fourthline.cling.android.AndroidUpnpServiceImpl;
 import org.fourthline.cling.android.FixedAndroidLogHandler;
@@ -44,7 +47,6 @@ import org.fourthline.cling.transport.RouterException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import info.androidhive.speechtotext.R;
 
 /**
  * @author Christian Bauer

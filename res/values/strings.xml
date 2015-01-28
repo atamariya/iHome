@@ -2,8 +2,16 @@
 <resources>
 
     <string name="app_name">iHome</string>
+
     <string name="action_settings">Settings</string>
     <string name="action_search">Search</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_delete">Delete</string>
+
+    <string name="continue1">Continue?</string>
+    <string name="cancel">Cancel</string>
+    <string name="override_prompt">The device is in a different zone. Do you still want to continue?</string>
+
     <string name="search_hint">Type a command</string>
     <string name="speech_prompt">Say something&#8230;</string>
     <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
