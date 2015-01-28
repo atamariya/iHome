@@ -4,7 +4,7 @@ public class Context {
     private String name;
     private int rssi, range;
 
-    public static final Context DEFAULT_CONTEXT = new Context("default");
+    public static final Context DEFAULT_CONTEXT = new Context("Default");
 
     public Context(String name) {
         this.name = name;

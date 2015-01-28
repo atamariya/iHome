@@ -205,7 +205,6 @@ public class MainActivity extends Activity {
             com.at.iHome.api.Context context1 = new com.at.iHome.api.Context(name, sharedPref.getInt(name, 0));
             if (context.equals(context1)) {
                 context = new com.at.iHome.api.Context(name);
-                zoneText.setText("Zone: " + name);
                 break;
             }
         }
@@ -216,6 +215,7 @@ public class MainActivity extends Activity {
         }
         List<Command> commands = null;
         try {
+            zoneText.setText("Zone: " + context.getName());
             commands = CommandHandler.getInstance().execute(context, str);
         } catch (ZoneException e) {
             speakText(getString(R.string.override_prompt));
@@ -253,7 +253,7 @@ public class MainActivity extends Activity {
                             rssi));
 
                     SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putInt(command.getValue(), rssi);
+                    editor.putInt(command.getValue().trim(), rssi);
                     editor.commit();
 
                     iter.remove();

@@ -27,6 +27,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 		this._listDataChild = listChildData;
 	}
 
+    public void update(List<String> listDataHeader,
+                       HashMap<String, List<String>> listChildData) {
+        this._listDataHeader = listDataHeader;
+        this._listDataChild = listChildData;
+        notifyDataSetChanged();
+    }
+
 	@Override
 	public Object getChild(int groupPosition, int childPosititon) {
 		return this._listDataChild.get(this._listDataHeader.get(groupPosition))

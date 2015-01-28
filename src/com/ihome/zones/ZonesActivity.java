@@ -4,13 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.ExpandableListView.OnGroupCollapseListener;
-import android.widget.ExpandableListView.OnGroupExpandListener;
-import android.widget.Toast;
+import android.widget.ListView;
 
 import com.at.iHome.api.Device;
 import com.at.iHome.logic.CommandHandler;
@@ -21,15 +23,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * UI to edit devices in a zone or delete devices and zones.
+ */
 public class ZonesActivity extends Activity {
 
 	ExpandableListAdapter listAdapter;
 	ExpandableListView expListView;
 	List<String> listDataHeader;
 	HashMap<String, List<String>> listDataChild;
+    int childPosition, groupPosition, itemType;
 
-	@Override
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_zones);
@@ -45,67 +50,112 @@ public class ZonesActivity extends Activity {
 		// setting list adapter
 		expListView.setAdapter(listAdapter);
 
-		// Listview Group click listener
-		expListView.setOnGroupClickListener(new OnGroupClickListener() {
-
-			@Override
-			public boolean onGroupClick(ExpandableListView parent, View v,
-					int groupPosition, long id) {
-				// Toast.makeText(getApplicationContext(),
-				// "Group Clicked " + listDataHeader.get(groupPosition),
-				// Toast.LENGTH_SHORT).show();
-				return false;
-			}
-		});
-
-		// Listview Group expanded listener
-		expListView.setOnGroupExpandListener(new OnGroupExpandListener() {
-
-			@Override
-			public void onGroupExpand(int groupPosition) {
-				Toast.makeText(getApplicationContext(),
-						listDataHeader.get(groupPosition) + " Expanded",
-						Toast.LENGTH_SHORT).show();
-			}
-		});
-
-		// Listview Group collasped listener
-		expListView.setOnGroupCollapseListener(new OnGroupCollapseListener() {
-
-			@Override
-			public void onGroupCollapse(int groupPosition) {
-				Toast.makeText(getApplicationContext(),
-						listDataHeader.get(groupPosition) + " Collapsed",
-						Toast.LENGTH_SHORT).show();
-
-			}
-		});
-
-		// Listview on child click listener
-		expListView.setOnChildClickListener(new OnChildClickListener() {
-
-			@Override
-			public boolean onChildClick(ExpandableListView parent, View v,
-					int groupPosition, int childPosition, long id) {
-				Toast.makeText(
-						getApplicationContext(),
-						listDataHeader.get(groupPosition)
-								+ " : "
-								+ listDataChild.get(
-										listDataHeader.get(groupPosition)).get(
-										childPosition), Toast.LENGTH_SHORT)
-						.show();
-				return false;
-			}
-		});
+        editMode();
+//        expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//                int itemType = ExpandableListView.getPackedPositionType(id);
+//                int childPosition = ExpandableListView.getPackedPositionChild(id);
+//                int groupPosition = ExpandableListView.getPackedPositionGroup(id);
+//
+//                return true;
+//            }
+//        });
 
         if (listDataHeader.size() > 0)
             expListView.expandGroup(0, true);
 	}
 
-	/*
-	 * Preparing the list data
-	 */
+    private void editMode() {
+        expListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        expListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position,
+                                                  long id, boolean checked) {
+                // Here you can do something when items are selected/de-selected,
+                // such as update the title in the CAB
+                itemType = ExpandableListView.getPackedPositionType(id);
+                childPosition = ExpandableListView.getPackedPositionChild(id);
+                groupPosition = ExpandableListView.getPackedPositionGroup(id);
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                // Respond to clicks on the actions in the CAB
+                switch (item.getItemId()) {
+                    case R.id.action_delete:
+                        deleteSelectedItems();
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
+                    case R.id.action_edit:
+                        editSelectedItems();
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                // Default group is not editable
+                if (listAdapter.getGroupCount() > 1) {
+                    // Inflate the menu for the CAB
+                    MenuInflater inflater = mode.getMenuInflater();
+                    inflater.inflate(R.menu.context_menu, menu);
+                }
+
+                return true;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                // Here you can make any necessary updates to the activity when
+                // the CAB is removed. By default, selected items are deselected/unchecked.
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                // Here you can perform updates to the CAB due to
+                // an invalidate() request
+                return false;
+            }
+        });
+    }
+
+    private void deleteSelectedItems() {
+        SharedPreferences sharedPref = getSharedPreferences("zones", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+            // delete group
+            String zone = listDataHeader.get(groupPosition);
+            editor.remove(zone.split(" ")[1]);
+        }
+        editor.commit();
+        prepareListData();
+        listAdapter.update(listDataHeader, listDataChild);
+    }
+
+    /**
+     * Edit range in zone. Edit zone in devices.
+     */
+    private void editSelectedItems() {
+        SharedPreferences sharedPref = getSharedPreferences("zones", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
+            // delete group
+            String zone = listDataHeader.get(groupPosition);
+//            editor.remove(zone);
+        }
+        editor.commit();
+        prepareListData();
+        expListView.invalidate();
+    }
+
+    /*
+     * Preparing the list data
+     */
 	private void prepareListData() {
 		listDataHeader = new ArrayList<String>();
 		listDataChild = new HashMap<String, List<String>>();
@@ -131,11 +181,8 @@ public class ZonesActivity extends Activity {
         }
 
         // Group everything else in default zone
-        String name = "Default";
-        listDataHeader.add("Zone: " + name);
-
-        // Add children
         com.at.iHome.api.Context context = com.at.iHome.api.Context.DEFAULT_CONTEXT;
+        listDataHeader.add("Zone: " + context.getName());
         List<Device> list = CommandHandler.getInstance().getDevices(context);
         List<String> children = new ArrayList<String>();
         for (Device device: list) {
@@ -144,4 +191,5 @@ public class ZonesActivity extends Activity {
         listDataChild.put(listDataHeader.get(i++), children);
 
 	}
+
 }
