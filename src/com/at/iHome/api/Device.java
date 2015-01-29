@@ -55,9 +55,11 @@ abstract public class Device {
                         .getSynonym(cmd);
                 if (str != null) {
                     String[] tokens = str.split(",");
+                    int i = tokens.length;
                     for (String token : tokens) {
                         command = getCommand(token);
                         if (command != null) {
+                            command.setChained(i-- > 1);
                             chain.add(command);
                         }
                     }

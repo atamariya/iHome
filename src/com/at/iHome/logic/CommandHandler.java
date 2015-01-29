@@ -35,7 +35,7 @@ public class CommandHandler {
 		device.setContext(new Context("2"));
         addDevice(device);
 
-        device = new XBMC("xbmc 1", "192.168.0.14");
+        device = new XBMC("xbmc 1", "192.168.0.14:8080");
         device.setContext(new Context("1"));
         addDevice(device);
 
@@ -124,7 +124,7 @@ public class CommandHandler {
 		
 		// Execute macros
 		Device macro = getDevice(cmd);
-		if (macro != null) {
+		if (macro instanceof Macro) {
 			chain.addAll(macro.execute(context, null));
 			return chain;
 		}
@@ -154,7 +154,9 @@ public class CommandHandler {
                 token = (tokens[i++]);
 				StringBuilder tmp = new StringBuilder();
 				for (int j = i; j < tokens.length; j++) {
-					tmp.append(tokens[j]).append(" ");
+                    tmp.append(tokens[j]);
+                    if (j + 1 < tokens.length)
+					    tmp.append(" ");
 				}
 
 				device.setParams(tmp.toString());
