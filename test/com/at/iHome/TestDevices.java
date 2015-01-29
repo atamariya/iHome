@@ -2,6 +2,7 @@ package com.at.iHome;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -27,24 +28,24 @@ public class TestDevices {
 		
 		Device device = new DenonAVR("avr", "192.168.0.44");
 		device.setContext(new Context("2"));
-		handler.addDevice("play", device);
+		handler.addDevice(device);
 
 		device = new LightControl("53ff71066667574819442167");
 		device.setContext(new Context("2"));
-		handler.addDevice("light", device);
+		handler.addDevice(device);
 
 //		device = new XBMC("xbmc", "192.168.0.26");
 //		device.setContext(new Context("2"));
-//        handler.addDevice("play", device);
+//        addDevice("play", device);
 
 		device = new IPCam("ipcam", "192.168.0.35");
 		device.setContext(new Context("1"));
 		device.setUsername("guest");
 		device.setPassword("passw0rd");
-		handler.addDevice("show", device);
+		handler.addDevice(device);
 
 		device = new SettingsCmd("settings");
-		handler.addDevice("set", device);
+		handler.addDevice(device);
 	}
 
 	@Test
@@ -140,19 +141,19 @@ public class TestDevices {
 
 		Device device = new DenonAVR("avr", "192.168.0.45");
 		device.setContext(context);
-		handler.addDevice("denon", device);
+		handler.addDevice(device);
 		
 		// Add same device (same host) again
 		device = new DenonAVR("avr", "192.168.0.45");
 		device.setContext(new Context("3"));
-		handler.addDevice("denon", device);
+		handler.addDevice(device);
 		
 		List<Device> list = handler.getDevices(context);
 		assertEquals(1, list.size());
 		
 		device = new DenonAVR("avr", "192.168.0.46");
 		device.setContext(new Context("3"));
-		handler.addDevice("denon", device);
+		handler.addDevice(device);
 		
 		list = CommandHandler.getInstance().getDevices(context);
 		assertEquals(2, list.size());
@@ -203,7 +204,7 @@ public class TestDevices {
 		device.setContext(context);
 		macro.addCommand("play radio");
 		
-		handler.addDevice("macro1", macro);
+		handler.addDevice(macro);
 		
 		List<Command> chain = handler.execute(context, "test macro");
 		assertEquals(2, chain.size());

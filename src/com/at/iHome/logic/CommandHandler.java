@@ -10,6 +10,7 @@ import com.at.iHome.api.Command;
 import com.at.iHome.api.Context;
 import com.at.iHome.api.Device;
 import com.at.iHome.api.Group;
+import com.at.iHome.api.Macro;
 import com.at.iHome.api.NoDeviceException;
 
 public class CommandHandler {
@@ -24,24 +25,24 @@ public class CommandHandler {
 	public CommandHandler() {
 		Device device = new DenonAVR("avr", "192.168.0.44");
 		device.setContext(new Context("2"));
-		addDevice("play", device);
+		addDevice(device);
 
 		device = new LightControl("53ff71066667574819442167");
 		device.setContext(new Context("2"));
-		addDevice("light", device);
+		addDevice(device);
 
 		device = new XBMC("xbmc", "192.168.0.26");
 		device.setContext(new Context("2"));
-        addDevice("play", device);
+        addDevice(device);
 
-		device = new IPCam("ipcam", "192.168.0.35");
+		device = new IPCam("front door", "192.168.0.35");
 		device.setContext(new Context("1"));
 		device.setUsername("guest");
 		device.setPassword("passw0rd");
-		addDevice("show", device);
+		addDevice(device);
 
 		device = new SettingsCmd("settings");
-		addDevice("set", device);
+		addDevice(device);
 
 		// devices
 		synonyms.put("watch", "play");
@@ -64,7 +65,20 @@ public class CommandHandler {
 		synonyms.put("movie", "search movie,open movie");
 	}
 
-	public void addDevice(String group, Device device) {
+	public void addDevice(Device device) {
+		String group = null;
+		if (device instanceof DenonAVR) {// || device instanceof XBMC) {
+			group = "play";
+		} else if (device instanceof LightControl) {
+			group = "light";
+		} else if (device instanceof IPCam) {
+			group = "show";
+		} else if (device instanceof SettingsCmd) {
+			group = "set";
+		} else if (device instanceof Macro) {
+			group = "macro";
+		}
+		
 		Group groupDevice;
 		if (devices.containsKey(group)) {
 			groupDevice = (Group) devices.get(group);
@@ -79,7 +93,7 @@ public class CommandHandler {
 	}
 
 	protected void addContext(Context context) {
-		if (!knownContexts.contains(context))
+		if (context != null && !knownContexts.contains(context))
 			knownContexts.add(context);
 	}
 
@@ -289,4 +303,8 @@ public class CommandHandler {
 			}
 		}
 	}
+
+    public List<Context> getKnownContexts() {
+        return knownContexts;
+    }
 }
