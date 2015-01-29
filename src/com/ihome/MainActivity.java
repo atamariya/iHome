@@ -176,6 +176,9 @@ public class MainActivity extends Activity {
                     List<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String str = result.get(0);
+                    if (str != null) {
+                        str = str.trim();
+                    }
                     //txtSpeechInput.setText(str);
                     searchView.setQuery(str, false);
 
@@ -299,7 +302,11 @@ public class MainActivity extends Activity {
         protected Long doInBackground(Command... params) {
             Long status = new Long(0);
             AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
+            boolean breakChain = false;
             for (int i = 0; i < params.length && status != new Long("-1") && !isCancelled(); i++) {
+                if (params[i].isChained() && breakChain) {
+                    continue;
+                }
                 final String url = params[i].getUrl();
                 String name = params[i].getName();
                 String value = params[i].getValue();
@@ -337,9 +344,11 @@ public class MainActivity extends Activity {
                 } catch (IOException e) {
                     e.printStackTrace();
                     msg = "Device unavailable";
+                    breakChain = true;
                 } catch (Exception e) {
                     e.printStackTrace();
                     status = new Long("-1");
+                    breakChain = true;
                 }
             }
 

@@ -26,13 +26,17 @@ public class CommandHandler {
 		Device device = new DenonAVR("avr", "192.168.0.44");
 		device.setContext(new Context("2"));
 		addDevice(device);
-
+		
 		device = new LightControl("53ff71066667574819442167");
 		device.setContext(new Context("2"));
 		addDevice(device);
 
 		device = new XBMC("xbmc", "192.168.0.26");
 		device.setContext(new Context("2"));
+        addDevice(device);
+
+        device = new XBMC("xbmc 1", "192.168.0.14");
+        device.setContext(new Context("1"));
         addDevice(device);
 
 		device = new IPCam("front door", "192.168.0.35");
@@ -67,7 +71,7 @@ public class CommandHandler {
 
 	public void addDevice(Device device) {
 		String group = null;
-		if (device instanceof DenonAVR) {// || device instanceof XBMC) {
+		if (device instanceof DenonAVR || device instanceof XBMC) {
 			group = "play";
 		} else if (device instanceof LightControl) {
 			group = "light";

@@ -1,6 +1,7 @@
 package com.at.iHome.api;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,10 +22,20 @@ public class Group extends Device {
 	@Override
 	public List<Command> execute(Context ctx, String cmd) {
 		List<Command> commands = new ArrayList<Command>();
-		for (Device device : devices) {
+		boolean executedOnce = false;
+		for (Iterator<Device> it = devices.iterator(); it.hasNext();) {
+			Device device = it.next();
 			device.setAll(isAll());
 			device.setParams(getParams());
-			commands.addAll(device.execute(ctx, cmd));
+			
+			try {
+				commands.addAll(device.execute(ctx, cmd));
+				executedOnce = true;
+			} catch (ZoneException e) {
+				if (!it.hasNext() && !executedOnce) {
+					throw e;
+				}
+			}
 		}
 		return commands;
 	}

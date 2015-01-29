@@ -127,10 +127,31 @@ public class TestDevices {
 	@Test(expected = ZoneException.class)
 	public void testDifferentZones() {
 		// Difference in device and current zone should throw ZoneException
-		Context context = new Context("1");
-		String string = "watch tv"; //"play tv", "play radio", "play game", "play movie",
+		Context context = new Context("2");
+		String string = "show camera"; //"play tv", "play radio", "play game", "play movie",
 		List<Command> chain = CommandHandler.getInstance().execute(context, string);
 		assertEquals(0, chain.size()); // This should not execute because of exception in previous step
+		System.out.println(chain);
+	}
+	
+	@Test
+	public void testDifferentZones1() {
+		CommandHandler handler = CommandHandler.getInstance();
+		
+		// Don't throw an exception if there's atleast one device to handle the command.
+		String string = "watch tv"; //"play tv", "play radio", "play game", "play movie",
+		Context context = new Context("1");
+		Device device = new DenonAVR("avr", "192.168.0.45");
+		device.setContext(context);
+		handler.addDevice(device);
+		
+		List<Command> chain = CommandHandler.getInstance().execute(context, string);
+		assertEquals(1, chain.size());
+		System.out.println(chain);
+		
+		context = new Context("2");
+		chain = CommandHandler.getInstance().execute(context, string);
+		assertEquals(1, chain.size());
 		System.out.println(chain);
 	}
 
