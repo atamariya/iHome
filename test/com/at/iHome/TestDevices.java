@@ -171,4 +171,20 @@ public class TestDevices {
 		assertEquals(0, chain.size()); // Should not come here
 	}
 
+	@Test
+	public void testDeviceRemoval() {
+		CommandHandler handler = CommandHandler.getInstance();
+		Context context = Context.DEFAULT_CONTEXT;
+		List<Device> list = handler.getDevices(context);
+		assertEquals(3, list.size());
+
+		// Non existing device
+		handler.removeDevice("denon");
+		list = handler.getDevices(context);
+		assertEquals(3, list.size());
+		
+		handler.removeDevice("avr");
+		list = handler.getDevices(context);
+		assertEquals(2, list.size());
+	}
 }

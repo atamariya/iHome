@@ -104,12 +104,9 @@ public class ZonesActivity extends Activity {
 
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                // Default group is not editable
-                if (listAdapter.getGroupCount() > 1) {
-                    // Inflate the menu for the CAB
-                    MenuInflater inflater = mode.getMenuInflater();
-                    inflater.inflate(R.menu.context_menu, menu);
-                }
+                // Inflate the menu for the CAB
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.context_menu, menu);
 
                 return true;
             }
@@ -144,9 +141,17 @@ public class ZonesActivity extends Activity {
             editor.commit();
         }
         if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
-            // set device context to default
-            CommandHandler.getInstance().setDeviceContext((String) listAdapter.getChild(groupPosition, childPosition),
-                    com.at.iHome.api.Context.DEFAULT_CONTEXT);
+            String zone = listDataHeader.get(groupPosition);
+            com.at.iHome.api.Context context = com.at.iHome.api.Context.DEFAULT_CONTEXT;
+            String child = (String) listAdapter.getChild(groupPosition, childPosition);
+            if (zone.equals(context.getName())) {
+                // If current group is default, delete device
+                CommandHandler.getInstance().removeDevice(child);
+            } else {
+                // set device context to default
+                CommandHandler.getInstance().setDeviceContext(child,
+                        context);
+            }
         }
         prepareListData();
         listAdapter.update(listDataHeader, listDataChild);

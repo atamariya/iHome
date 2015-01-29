@@ -75,7 +75,12 @@ public class CommandHandler {
 		groupDevice.addDevice(device);
 		devices.put(group, groupDevice);
 		
-		knownContexts.add(device.getContext());
+		addContext(device.getContext());
+	}
+
+	protected void addContext(Context context) {
+		if (!knownContexts.contains(context))
+			knownContexts.add(context);
 	}
 
 	public static CommandHandler getInstance() {
@@ -227,7 +232,7 @@ public class CommandHandler {
 
 		return list;
 	}
-
+	
     public void setDeviceContext(String name, Context context) {
         for (Group group : devices.values()) {
             for (Device device : group.getDevices())
@@ -237,8 +242,26 @@ public class CommandHandler {
                 }
         }
     }
-
-    public void clear() {
+	
+	public void clear() {
 		devices.clear();
+	}
+	
+	public void removeDevice(String name) {
+		if (name == null)
+			return;
+		
+		// Remove device
+		knownContexts.clear();
+		for (Group group : devices.values()) {
+			for (Iterator<Device> iterator = group.getDevices().iterator(); iterator.hasNext();) {
+				Device device = iterator.next();
+				if (name.equals(device.getName())) {
+					iterator.remove();
+				}
+				// Clean known contexts
+				addContext(device.getContext());
+			}
+		}
 	}
 }
