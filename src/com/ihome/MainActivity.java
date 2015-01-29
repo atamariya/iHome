@@ -37,7 +37,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -277,9 +276,23 @@ public class MainActivity extends Activity {
             case R.id.action_settings:
                 modifyZones();
                 return true;
+            case R.id.action_add:
+                addDevice();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void addDevice() {
+            Intent intent = new Intent(this, AddDeviceActivity.class);
+            try {
+                startActivity(intent);
+            } catch (ActivityNotFoundException a) {
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.errorSwitchingRouter),
+                        Toast.LENGTH_SHORT).show();
+            }
     }
 
     class NetTask extends AsyncTask<Command, Void, Long> {

@@ -32,6 +32,7 @@
 
         </activity>
         <activity android:name="com.ihome.zones.ZonesActivity"/>
+        <activity android:name="com.ihome.AddDeviceActivity" android:theme="@android:style/Theme.Holo.Dialog"/>
 
         <service android:name="org.fourthline.cling.android.AndroidUpnpServiceImpl"/>
 

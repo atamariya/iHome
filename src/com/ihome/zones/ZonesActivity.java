@@ -93,10 +93,6 @@ public class ZonesActivity extends Activity {
                         editSelectedItems();
                         mode.finish(); // Action picked, so close the CAB
                         return true;
-                    case R.id.action_add:
-                        addDevice();
-                        mode.finish(); // Action picked, so close the CAB
-                        return true;
                     default:
                         return false;
                 }
@@ -124,10 +120,6 @@ public class ZonesActivity extends Activity {
                 return false;
             }
         });
-    }
-
-    private void addDevice() {
-
     }
 
     private void deleteSelectedItems() {
