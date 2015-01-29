@@ -7,11 +7,13 @@ public class Context {
     public static final Context DEFAULT_CONTEXT = new Context("Default");
 
     public Context(String name) {
+        if (name != null)
+            name = name.trim();
         this.name = name;
     }
 
     public Context(String name, int rssi) {
-        this.name = name;
+        this(name);
         this.rssi = rssi;
     }
 
@@ -26,7 +28,7 @@ public class Context {
 
         if (obj != null && obj instanceof Context) {
             Context that = (Context) obj;
-            if ((name != null && that.getName() != null && name.trim().equals(that.getName().trim()))
+            if ((name != null && that.getName() != null && name.equals(that.getName()))
                     || ((rssi == that.getRssi()) && rssi != 0)
                     || ((rssi + range > that.getRssi()) &&
                     (rssi - range < that.getRssi()))

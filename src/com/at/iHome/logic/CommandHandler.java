@@ -10,6 +10,7 @@ import com.at.iHome.api.Command;
 import com.at.iHome.api.Context;
 import com.at.iHome.api.Device;
 import com.at.iHome.api.Group;
+import com.at.iHome.api.NoDeviceException;
 
 public class CommandHandler {
 	private static CommandHandler instance = new CommandHandler();
@@ -18,6 +19,7 @@ public class CommandHandler {
 	 * Map of <common word, command>.
 	 */
 	private Map<String, String> synonyms = new HashMap<String, String>();
+	private List<Context> knownContexts = new ArrayList<Context>();
 
 	public CommandHandler() {
 		Device device = new DenonAVR("avr", "192.168.0.44");
@@ -72,6 +74,8 @@ public class CommandHandler {
 		groupDevice.setAudioDevice(device.isAudioDevice());
 		groupDevice.addDevice(device);
 		devices.put(group, groupDevice);
+		
+		knownContexts.add(device.getContext());
 	}
 
 	public static CommandHandler getInstance() {
@@ -82,6 +86,18 @@ public class CommandHandler {
 		List<Command> chain = new ArrayList<Command>();
 		if (cmd == null)
 			return chain;
+		
+		// Check if there are devices in current or default context to execute the command
+		List<Device> devices = getDevices(context);
+		if (devices.size() == 0)
+			devices = getDevices(Context.DEFAULT_CONTEXT);
+		if (devices.size() == 0)
+			throw new NoDeviceException();
+		
+		// If context is not a known context, use default
+		if (!knownContexts.contains(context)) {
+			context = Context.DEFAULT_CONTEXT;
+		}
 
 		cmd = getSynonym(cmd);
 		String[] tokens = cmd.split(" ");
@@ -95,13 +111,13 @@ public class CommandHandler {
 		}
 
 		if ("volume".equals(token)) {
-			for (Device device : devices.values()) {
+			for (Device device : devices) {
 				if (device.isAudioDevice()) {
 					chain.addAll(device.execute(context, cmd));
 				}
 			}
 		} else {
-			Device device = devices.get(token);
+			Device device = getDevice(token);
 			if (device != null && tokens.length > 1) {
                 // Don't expand macro here
 //				token = getSynonym(tokens[i++]);
@@ -133,13 +149,17 @@ public class CommandHandler {
 			} else {
 				// Single word command (play/pause/resume) - pass as is
 				// Handle "all off" case
-				for (Device dev : devices.values()) {
+				for (Device dev : devices) {
 					dev.setAll(all);
 					chain.addAll(dev.execute(context, token));
 				}
 			}
 		}
 		return chain;
+	}
+
+	protected Device getDevice(String token) {
+		return devices.get(token);
 	}
 
 	public static void main(String args[]) {
@@ -198,10 +218,11 @@ public class CommandHandler {
 	public List<Device> getDevices(Context context) {
 		List<Device> list = new ArrayList<Device>();
 		for (Group group : devices.values()) {
-			for (Device device : group.getDevices())
+			for (Device device : group.getDevices()) {
 				if (device.getContext() != null
 						&& device.getContext().equals(context))
 					list.add(device);
+			}
 		}
 
 		return list;
@@ -216,4 +237,8 @@ public class CommandHandler {
                 }
         }
     }
+
+    public void clear() {
+		devices.clear();
+	}
 }
