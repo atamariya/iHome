@@ -2,7 +2,6 @@ package com.at.iHome;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -11,6 +10,7 @@ import org.junit.Test;
 import com.at.iHome.api.Command;
 import com.at.iHome.api.Context;
 import com.at.iHome.api.Device;
+import com.at.iHome.api.Macro;
 import com.at.iHome.api.NoDeviceException;
 import com.at.iHome.api.ZoneException;
 import com.at.iHome.logic.CommandHandler;
@@ -35,7 +35,7 @@ public class TestDevices {
 
 //		device = new XBMC("xbmc", "192.168.0.26");
 //		device.setContext(new Context("2"));
-//        addDevice("play", device);
+//        handler.addDevice("play", device);
 
 		device = new IPCam("ipcam", "192.168.0.35");
 		device.setContext(new Context("1"));
@@ -186,5 +186,27 @@ public class TestDevices {
 		handler.removeDevice("avr");
 		list = handler.getDevices(context);
 		assertEquals(2, list.size());
+	}
+	
+	@Test
+	public void testMacro() {
+		CommandHandler handler = CommandHandler.getInstance();
+		Context context = Context.DEFAULT_CONTEXT;
+		
+		Macro macro = new Macro("test macro");
+
+		Device device = new DenonAVR("avr", "192.168.0.45");
+		device.setContext(context);
+		macro.addCommand("play tv");
+		
+		device = new DenonAVR("avr", "192.168.0.45");
+		device.setContext(context);
+		macro.addCommand("play radio");
+		
+		handler.addDevice("macro1", macro);
+		
+		List<Command> chain = handler.execute(context, "test macro");
+		assertEquals(2, chain.size());
+		System.out.println(chain);
 	}
 }

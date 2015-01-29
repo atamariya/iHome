@@ -103,6 +103,13 @@ public class CommandHandler {
 		if (!knownContexts.contains(context)) {
 			context = Context.DEFAULT_CONTEXT;
 		}
+		
+		// Execute macros
+		Device macro = getDevice(cmd);
+		if (macro != null) {
+			chain.addAll(macro.execute(context, null));
+			return chain;
+		}
 
 		cmd = getSynonym(cmd);
 		String[] tokens = cmd.split(" ");
@@ -163,8 +170,26 @@ public class CommandHandler {
 		return chain;
 	}
 
-	protected Device getDevice(String token) {
-		return devices.get(token);
+	protected Device getDevice(String name) {
+		// Check for device groups before checking for individual devices
+		Device result = devices.get(name);
+
+		// This part is needed by macros
+		if (result == null) {
+			boolean done = false;
+			for (Group group : devices.values()) {
+				if (done)
+					break;
+				
+				for (Device device : group.getDevices())
+					if (device.getName().equals(name)) {
+						result = device;
+						done = true;
+						break;
+					}
+			}
+		}
+		return result;
 	}
 
 	public static void main(String args[]) {
