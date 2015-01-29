@@ -46,6 +46,7 @@ public class ZonesActivity extends Activity {
 		prepareListData();
 
 		listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+        listAdapter.setGroupPrefix("Zone: ");
 
 		// setting list adapter
 		expListView.setAdapter(listAdapter);
@@ -139,7 +140,7 @@ public class ZonesActivity extends Activity {
             SharedPreferences.Editor editor = sharedPref.edit();
 
             String zone = listDataHeader.get(groupPosition);
-            editor.remove(zone.split(" ")[1]);
+            editor.remove(zone);
             editor.commit();
         }
         if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
@@ -182,7 +183,7 @@ public class ZonesActivity extends Activity {
         Map<String, ?> zones = sharedPref.getAll();
         int i = 0;
         for (String name : zones.keySet()) {
-            listDataHeader.add("Zone: " + name);
+            listDataHeader.add(name);
 
             // Add children
             com.at.iHome.api.Context context = new com.at.iHome.api.Context(name);
@@ -196,7 +197,7 @@ public class ZonesActivity extends Activity {
 
         // Group everything else in default zone
         com.at.iHome.api.Context context = com.at.iHome.api.Context.DEFAULT_CONTEXT;
-        listDataHeader.add("Zone: " + context.getName());
+        listDataHeader.add(context.getName());
         List<Device> list = CommandHandler.getInstance().getDevices(context);
         List<String> children = new ArrayList<String>();
         for (Device device: list) {

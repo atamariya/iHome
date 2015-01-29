@@ -19,8 +19,9 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 	private List<String> _listDataHeader; // header titles
 	// child data in format of header title, child title
 	private HashMap<String, List<String>> _listDataChild;
+    private String groupPrefix;
 
-	public ExpandableListAdapter(Context context, List<String> listDataHeader,
+   public ExpandableListAdapter(Context context, List<String> listDataHeader,
 			HashMap<String, List<String>> listChildData) {
 		this._context = context;
 		this._listDataHeader = listDataHeader;
@@ -91,7 +92,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded,
 			View convertView, ViewGroup parent) {
-		String headerTitle = (String) getGroup(groupPosition);
+		String headerTitle = getGroupPrefix();
+        if (headerTitle == null) {
+            headerTitle = (String) getGroup(groupPosition);
+        } else {
+            headerTitle = headerTitle + " " + (String) getGroup(groupPosition);
+        }
 		if (convertView == null) {
 			LayoutInflater infalInflater = (LayoutInflater) this._context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -115,5 +121,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 	public boolean isChildSelectable(int groupPosition, int childPosition) {
 		return true;
 	}
+
+    public String getGroupPrefix() {
+        return groupPrefix;
+    }
+
+    public void setGroupPrefix(String groupPrefix) {
+        this.groupPrefix = groupPrefix;
+    }
+
 
 }
