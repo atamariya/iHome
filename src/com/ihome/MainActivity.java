@@ -176,9 +176,6 @@ public class MainActivity extends Activity {
                     List<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     String str = result.get(0);
-                    if (str != null) {
-                        str = str.trim();
-                    }
                     //txtSpeechInput.setText(str);
                     searchView.setQuery(str, false);
 
