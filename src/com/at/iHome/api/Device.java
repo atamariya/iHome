@@ -110,7 +110,9 @@ abstract public class Device {
 
     @Override
     public String toString() {
-        return host;
+        StringBuilder str = new StringBuilder(name);
+        str.append(": ").append(host);
+        return str.toString();
     }
 
     public boolean isAudioDevice() {

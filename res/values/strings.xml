@@ -12,13 +12,16 @@
     <string name="continue1">Continue?</string>
     <string name="cancel">Cancel</string>
     <string name="override_prompt">The device is in a different zone. Do you still want to continue?</string>
+    <string name="device">Device</string>
 
+    <string name="name_hint">Device name</string>
+    <string name="host_hint">Hostname or IP Address</string>
     <string name="search_hint">Type a command</string>
     <string name="speech_prompt">Say something&#8230;</string>
     <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
     <string name="tap_on_mic">Tap on mic to speak</string>
 
-    <string name="appName">Cling Browser</string>
+    <string name="appName">iHome</string>
 
     <string name="deviceDetails">Device Details</string>
 

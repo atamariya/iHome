@@ -7,7 +7,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/name"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:hint="@string/name_hint" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/host"
+        android:layout_gravity="center_horizontal"
+        android:hint="@string/host_hint"/>
 
     <Spinner
         android:layout_width="match_parent"
@@ -39,7 +47,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ok"
+            android:text="@android:string/ok"
             android:id="@+id/ok"
             style="?android:attr/buttonBarButtonStyle"
             />

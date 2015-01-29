@@ -295,7 +295,7 @@ public class MainActivity extends Activity {
             }
     }
 
-    class NetTask extends AsyncTask<Command, Void, Long> {
+    class NetTask extends AsyncTask<Command, Integer, Long> {
         protected Long doInBackground(Command... params) {
             Long status = new Long(0);
             AndroidHttpClient client = AndroidHttpClient.newInstance("Android");
@@ -333,7 +333,7 @@ public class MainActivity extends Activity {
                     } else if (params[i].getResponseProcessor() != null) {
                         params[i].getResponseProcessor().process(str);
                     }
-//                publishProgress((int) ((i / (float) count) * 100));
+                    publishProgress((int) ((i / (float) params.length) * 100));
                 } catch (IOException e) {
                     e.printStackTrace();
                     msg = "Device unavailable";
@@ -347,9 +347,9 @@ public class MainActivity extends Activity {
             return status;
         }
 
-//    protected void onProgressUpdate(Integer... progress) {
-////        setProgressPercent(progress[0]);
-//    }
+        protected void onProgressUpdate(Integer... progress) {
+//            progressDialog.setProgress(progress[0]);
+        }
 
         protected void onPostExecute(Long result) {
             if (!new Long(0).equals(result)) {
