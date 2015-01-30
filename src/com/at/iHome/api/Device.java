@@ -18,7 +18,12 @@ abstract public class Device {
     protected List<String> params;
 
     protected Map<String, String> commands = new HashMap<String, String>();
-    protected String host, url, name, username, password;
+    protected String host;
+    protected String url;
+
+    protected String name;
+    protected String username;
+    protected String password;
     protected String scheme = "http://";
 
     /**
@@ -219,4 +224,17 @@ abstract public class Device {
     public void setParams(List<String> params) {
         this.params = params;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
 }

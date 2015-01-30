@@ -191,7 +191,7 @@ public class CommandHandler {
 		return chain;
 	}
 
-	protected Device getDevice(String name) {
+	public Device getDevice(String name) {
 		// Check for device groups before checking for individual devices
 		Device result = devices.get(name);
 

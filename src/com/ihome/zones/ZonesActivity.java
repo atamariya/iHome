@@ -1,7 +1,9 @@
 package com.ihome.zones;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ActionMode;
@@ -13,10 +15,12 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.at.iHome.api.Device;
 import com.at.iHome.logic.CommandHandler;
 import com.at.ihome.R;
+import com.ihome.AddDeviceActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -153,16 +157,17 @@ public class ZonesActivity extends Activity {
      * Edit range in zone. Edit zone in devices.
      */
     private void editSelectedItems() {
-        SharedPreferences sharedPref = getSharedPreferences("zones", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        if (itemType == ExpandableListView.PACKED_POSITION_TYPE_GROUP) {
-            // delete group
-            String zone = listDataHeader.get(groupPosition);
-//            editor.remove(zone);
+        if (itemType == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
+            Intent intent = new Intent(this, AddDeviceActivity.class);
+            intent.putExtra("deviceName", (String) listAdapter.getChild(groupPosition, childPosition));
+            try {
+                startActivity(intent);
+            } catch (ActivityNotFoundException a) {
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.errorSwitchingRouter),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
-        editor.commit();
-        prepareListData();
-        expListView.invalidate();
     }
 
     /*
