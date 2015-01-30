@@ -52,6 +52,7 @@ public class Group extends Device {
 	 */
 	public void addDevice(Device device) {
 		if (devices.contains(device)) {
+            // Devices are compared on host; so other edits are ignored unless cleanup is done
             devices.remove(device);
         }
 		this.devices.add(device);
