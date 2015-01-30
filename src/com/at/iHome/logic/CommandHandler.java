@@ -10,6 +10,7 @@ import com.at.iHome.api.Command;
 import com.at.iHome.api.Context;
 import com.at.iHome.api.Device;
 import com.at.iHome.api.Group;
+import com.at.iHome.api.InvalidDeviceType;
 import com.at.iHome.api.Macro;
 import com.at.iHome.api.NoDeviceException;
 
@@ -96,7 +97,7 @@ public class CommandHandler {
 		addContext(device.getContext());
 	}
 
-	protected void addContext(Context context) {
+	public void addContext(Context context) {
 		if (context != null && !knownContexts.contains(context))
 			knownContexts.add(context);
 	}
@@ -311,6 +312,39 @@ public class CommandHandler {
 	}
 
     public List<Context> getKnownContexts() {
-        return knownContexts;
+        List<Context> contexts = new ArrayList<Context>();
+        contexts.add(Context.DEFAULT_CONTEXT);
+        contexts.addAll(knownContexts);
+        return contexts;
+    }
+
+    public List<String> getSupportedDevices() {
+        List<String> type = new ArrayList<String>();
+        type.add("Cisco DCS-930L");
+        type.add("Denon AVR");
+        type.add("XBMC");
+
+        return type;
+    }
+
+    public Device createDevice(Context context, String name, String host, int type) {
+        String deviceType = getSupportedDevices().get(type);
+        Device device = null;
+        switch (type) {
+            case 0:
+                device = new IPCam(name, host);
+                break;
+            case 1:
+                device = new DenonAVR(name, host);
+                break;
+            case 2:
+                device = new XBMC(name, host);
+                break;
+            default:
+                throw new InvalidDeviceType();
+        }
+
+        device.setContext(context);
+        return device;
     }
 }

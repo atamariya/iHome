@@ -111,6 +111,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        loadZoneInfo();
     }
 
     public void speakText(String toSpeak) {
@@ -187,6 +188,15 @@ public class MainActivity extends Activity {
         }
     }
 
+    private  void loadZoneInfo() {
+        SharedPreferences sharedPref = getSharedPreferences("zones", Context.MODE_PRIVATE);
+        Map<String, ?> zones = sharedPref.getAll();
+        for (String name : zones.keySet()) {
+            com.at.iHome.api.Context context = new com.at.iHome.api.Context(name, sharedPref.getInt(name, 0));
+            CommandHandler.getInstance().addContext(context);
+        }
+    }
+
     public void processCommand(String str) {
         processCommand(str, false);
     }
@@ -251,8 +261,11 @@ public class MainActivity extends Activity {
                     txtSpeechInput.setText(String.format("%s %s %d", command.getName(), command.getValue(),
                             rssi));
 
+                    com.at.iHome.api.Context context1 = new com.at.iHome.api.Context(command.getValue(), rssi);
+                    CommandHandler.getInstance().addContext(context1);
+
                     SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putInt(command.getValue().trim(), rssi);
+                    editor.putInt(context1.getName(), rssi);
                     editor.commit();
 
                     iter.remove();
