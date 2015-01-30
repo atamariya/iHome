@@ -48,6 +48,9 @@ public class XBMC extends Device {
 
 		// Player control
         // { "jsonrpc": "2.0", "method": "Input.ExecuteAction", "params": { "action": "stop" }, "id": 1 }
+        // {"jsonrpc":"2.0","id":"1","method":"Player.GetActivePlayers"}
+        // {"jsonrpc":"2.0","id":"1","method":"Player.PlayPause","params":{"playerid" : 1, "play" : "toggle"}}
+        // For play/pause, first figure out active player, then send action
 		commands.put("play", "Input.ExecuteAction"); // { "action": "play" }
 		commands.put("pause", "Input.ExecuteAction"); //  { "action": "pause" }
         commands.put("stop", "Input.ExecuteAction"); //{ "action": "stop" }
@@ -56,9 +59,9 @@ public class XBMC extends Device {
         values.put("stop", "\"action\": \"stop\""); //{ "action": "stop" }
         // {"jsonrpc":"2.0","id":"1","method":"Player.Open","params":{"item":{"file":"nfs://192.168.0.33/media/shared/Songs/F00/BYWW.mp3"}}}
         commands.put("open song", "Player.Open");
-        values.put("open song", "\"item\":{%s}");
+//        values.put("open song", "\"item\":{%s}");
         commands.put("open movie", "Player.Open");
-        values.put("open movie", "\"item\":{%s}");
+//        values.put("open movie", "\"item\":{%s}");
 
         //{"jsonrpc":"2.0","method":"Player.GoTo","id":1,"params":{"playerid":0,"to":"next"}}
         commands.put("next", "Player.GoTo");
@@ -80,7 +83,7 @@ public class XBMC extends Device {
         commands.put("notify", "GUI.ShowNotification");
         
         String str = "\"filter\":{\"field\":\"title\", \"operator\":\"contains\",\"value\":\"%s\"}," +
-                "\"properties\":[\"lastplayed\"],\"sort\":{\"order\":\"descending\",\"method\":\"lastplayed\"}" +
+                "\"properties\":[\"playcount\"],\"sort\":{\"order\":\"ascending\",\"method\":\"playcount\"}" +
                 ", \"limits\": {\"end\": 1}";
         paramTemplate.put("search song", str);
         paramTemplate.put("search movie", str);
@@ -88,9 +91,9 @@ public class XBMC extends Device {
         str = "\"title\": \"%s\", \"message\": \"%s\"";
         paramTemplate.put("notify", str);
         
-        str = "\"item\":{\"songid\": %s}";
+        str = "\"item\":{\"songid\": %s}, \"options\": {\"resume\":true}";
         paramTemplate.put("open song", str);
-        str = "\"item\":{\"movieid\": %s}";
+        str = "\"item\":{\"movieid\": %s}, \"options\": {\"resume\":true}";
         paramTemplate.put("open movie", str);
         
 	}

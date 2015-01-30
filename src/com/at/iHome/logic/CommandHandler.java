@@ -23,6 +23,7 @@ public class CommandHandler {
 	 */
 	private Map<String, String> synonyms = new HashMap<String, String>();
 	private List<Context> knownContexts = new ArrayList<Context>();
+    private List<String> status = new ArrayList<String>();
 
 	public CommandHandler() {
 		Device device = new DenonAVR("avr", "192.168.0.44");
@@ -107,91 +108,6 @@ public class CommandHandler {
 		return instance;
 	}
 
-	public List<Command> execute(Context context, String cmd) {
-		List<Command> chain = new ArrayList<Command>();
-		if (cmd == null)
-			return chain;
-		
-		// Check if there are devices in current or default context to execute the command
-		List<Device> devices = getDevices(context);
-		if (devices.size() == 0)
-			devices = getDevices(Context.DEFAULT_CONTEXT);
-		if (devices.size() == 0)
-			throw new NoDeviceException();
-		
-		// If context is not a known context, use default
-		if (!knownContexts.contains(context)) {
-			context = Context.DEFAULT_CONTEXT;
-		}
-		
-		// Execute macros
-		Device macro = getDevice(cmd);
-		if (macro instanceof Macro) {
-			chain.addAll(macro.execute(context, null));
-			return chain;
-		}
-
-		cmd = getSynonym(cmd);
-		String[] tokens = cmd.split(" ");
-		int i = 0; // token position
-		String token = getSynonym(tokens[i++]);
-		boolean all = false;
-
-		if ("all".equals(token)) {
-			token = getSynonym(tokens[i++]);
-			all = true;
-		}
-
-		if ("volume".equals(token)) {
-			for (Device device : devices) {
-				if (device.isAudioDevice()) {
-					chain.addAll(device.execute(context, cmd));
-				}
-			}
-		} else {
-			Device device = getDevice(token);
-			if (device != null && tokens.length > 1) {
-                // Don't expand macro here
-//				token = getSynonym(tokens[i++]);
-                token = (tokens[i++]);
-				StringBuilder tmp = new StringBuilder();
-				for (int j = i; j < tokens.length; j++) {
-                    tmp.append(tokens[j]);
-                    if (j + 1 < tokens.length)
-					    tmp.append(" ");
-				}
-
-				device.setParams(tmp.toString());
-				device.setAll(all);
-
-				// Expand macro for action
-				tokens = token.split(",");
-				if (tokens.length > 1) {
-					List<Command> macroChain = new ArrayList<Command>();
-					for (String str : tokens) {
-						macroChain.addAll(device.execute(context, str));
-					}
-					for (Iterator<Command> iterator = macroChain.iterator(); iterator
-							.hasNext();) {
-						Command command = iterator.next();
-						command.setChained(iterator.hasNext());
-					}
-					chain.addAll(macroChain);
-				} else {
-					chain.addAll(device.execute(context, token));
-				}
-			} else {
-				// Single word command (play/pause/resume) - pass as is
-				// Handle "all off" case
-				for (Device dev : devices) {
-					dev.setAll(all);
-					chain.addAll(dev.execute(context, token));
-				}
-			}
-		}
-		return chain;
-	}
-
 	public Device getDevice(String name) {
 		// Check for device groups before checking for individual devices
 		Device result = devices.get(name);
@@ -202,7 +118,7 @@ public class CommandHandler {
 			for (Group group : devices.values()) {
 				if (done)
 					break;
-				
+
 				for (Device device : group.getDevices())
 					if (device.getName().equals(name)) {
 						result = device;
@@ -213,6 +129,101 @@ public class CommandHandler {
 		}
 		return result;
 	}
+
+    public List<Command> execute(Context context, String cmd) {
+        List<Command> chain = new ArrayList<Command>();
+        if (cmd == null)
+            return chain;
+
+        // Check if there are devices in current or default context to execute the command
+        List<Device> devices = getDevices(context);
+        if (devices.size() == 0)
+            devices = getDevices(Context.DEFAULT_CONTEXT);
+        if (devices.size() == 0)
+            throw new NoDeviceException();
+
+        // If context is not a known context, use default
+        if (!knownContexts.contains(context)) {
+            context = Context.DEFAULT_CONTEXT;
+        }
+
+        // Execute macros
+        Device macro = getDevice(cmd);
+        if (macro instanceof Macro) {
+            chain.addAll(macro.execute(context, null));
+            return chain;
+        }
+
+        cmd = getSynonym(cmd);
+        String[] tokens = cmd.split(" ");
+        int i = 0; // token position
+        String token = getSynonym(tokens[i++]);
+        boolean all = false;
+
+        if ("all".equals(token)) {
+            token = getSynonym(tokens[i++]);
+            all = true;
+        }
+
+        if ("volume".equals(token)) {
+            for (Device device : devices) {
+                if (device.isAudioDevice()) {
+                    chain.addAll(device.execute(context, cmd));
+                }
+            }
+        } else {
+            Device device = getDevice(token);
+            if (device != null && tokens.length > 1) {
+                // Don't expand macro here
+//				token = getSynonym(tokens[i++]);
+                token = (tokens[i++]);
+                StringBuilder tmp = new StringBuilder();
+                for (int j = i; j < tokens.length; j++) {
+                    tmp.append(tokens[j]);
+                    if (j + 1 < tokens.length)
+                        tmp.append(" ");
+                }
+
+                device.setParams(tmp.toString());
+                device.setAll(all);
+
+                // Expand macro for action
+                tokens = token.split(",");
+                if (tokens.length > 1) {
+                    List<Command> macroChain = new ArrayList<Command>();
+                    for (String str : tokens) {
+                        macroChain.addAll(device.execute(context, str));
+                    }
+                    for (Iterator<Command> iterator = macroChain.iterator(); iterator
+                            .hasNext();) {
+                        Command command = iterator.next();
+                        command.setChained(iterator.hasNext());
+                    }
+                    chain.addAll(macroChain);
+                } else {
+                    chain.addAll(device.execute(context, token));
+                    if ("movie".equals(token)) {
+                        status.clear();
+                        status.add(token);
+                        status.add(tmp.toString());
+                    }
+
+                }
+            } else {
+                // Single word command (play/pause/resume) - pass as is
+                // Handle "all off" case
+                for (Device dev : devices) {
+                    if ("play".equals(token) && !status.isEmpty()) {
+                        token = status.get(0);
+                        device.setParams(status.get(1));
+                    }
+                    dev.setAll(all);
+                    chain.addAll(dev.execute(context, token));
+                }
+            }
+        }
+        return chain;
+    }
 
 	public static void main(String args[]) {
 		String cmd[] = new String[] {

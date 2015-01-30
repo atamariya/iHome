@@ -205,7 +205,7 @@ public class MainActivity extends Activity {
         // Determine zone context
         int rssi = wifiManager.getConnectionInfo().getRssi();
         SharedPreferences sharedPref = getSharedPreferences("range", Context.MODE_PRIVATE);
-        int range = sharedPref.getInt("range", 5);
+        int range = sharedPref.getInt("range", 10);
 
         sharedPref = getSharedPreferences("zones", Context.MODE_PRIVATE);
         Map<String, ?> zones = sharedPref.getAll();
@@ -353,7 +353,7 @@ public class MainActivity extends Activity {
                     publishProgress((int) ((i / (float) params.length) * 100));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    msg = "Device unavailable";
+                    msg = "One or more devices are unavailable";
                     breakChain = true;
                 } catch (Exception e) {
                     e.printStackTrace();
