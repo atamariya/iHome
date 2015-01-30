@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.at.iHome.api.Command;
 import com.at.iHome.api.Device;
+import com.at.iHome.api.DeviceType;
 
 /**
  * curl https://api.spark.io/v1/devices/0123456789abcdef01234567/brew \
@@ -26,6 +27,7 @@ public class LightControl extends Device {
         uri = "/v1/devices/" + name + "/digitalwrite";
         CMD = "params";
         this.url = scheme + host + uri;
+        type = DeviceType.SPARK_CORE;
         
         // Special case
         commands.put("on", "D6,HIGH");

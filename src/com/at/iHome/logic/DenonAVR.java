@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.at.iHome.api.Command;
 import com.at.iHome.api.Device;
+import com.at.iHome.api.DeviceType;
 
 public class DenonAVR extends Device {
 
@@ -12,6 +13,7 @@ public class DenonAVR extends Device {
 		uri = "/MainZone/index.put.asp";
 		CMD = "cmd0";
 		this.url = scheme + host + uri;
+        type = DeviceType.DENON;
 
 		// Mode control
 		commands.put("game", "PutZone_InputFunction/GAME");

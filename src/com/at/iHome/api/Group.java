@@ -51,8 +51,10 @@ public class Group extends Device {
 	 * @param device the devices to set
 	 */
 	public void addDevice(Device device) {
-		if (!devices.contains(device))
-			this.devices.add(device);
+		if (devices.contains(device)) {
+            devices.remove(device);
+        }
+		this.devices.add(device);
 	}
 
 }

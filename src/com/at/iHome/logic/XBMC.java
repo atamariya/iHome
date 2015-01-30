@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.at.iHome.api.Command;
 import com.at.iHome.api.Device;
+import com.at.iHome.api.DeviceType;
 import com.at.iHome.api.ResponseProcessor;
 
 import org.json.JSONException;
@@ -20,6 +21,7 @@ public class XBMC extends Device {
 		CMD = "{\"jsonrpc\": \"2.0\", \"method\": \"%s\", \"params\": { %s }, \"id\": 1}";
         uri = "/jsonrpc";
         this.url = scheme + host + uri;
+        type = DeviceType.XBMC;
         
 		// Mode control
 //		commands.put("music", "PutZone_InputFunction/GAME");

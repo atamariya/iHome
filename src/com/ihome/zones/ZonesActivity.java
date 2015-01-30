@@ -46,26 +46,16 @@ public class ZonesActivity extends Activity {
 		// get the listview
 		expListView = (ExpandableListView) findViewById(R.id.lvExp);
 
-		// preparing list data
-		prepareListData();
-
 		listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
         listAdapter.setGroupPrefix("Zone: ");
 
-		// setting list adapter
-		expListView.setAdapter(listAdapter);
-
         editMode();
-//        expListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//                int itemType = ExpandableListView.getPackedPositionType(id);
-//                int childPosition = ExpandableListView.getPackedPositionChild(id);
-//                int groupPosition = ExpandableListView.getPackedPositionGroup(id);
-//
-//                return true;
-//            }
-//        });
+
+        // preparing list data
+        prepareListData();
+
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
 
         if (listDataHeader.size() > 0)
             expListView.expandGroup(0, true);
@@ -150,7 +140,6 @@ public class ZonesActivity extends Activity {
             }
         }
         prepareListData();
-        listAdapter.update(listDataHeader, listDataChild);
     }
 
     /**
@@ -161,7 +150,7 @@ public class ZonesActivity extends Activity {
             Intent intent = new Intent(this, AddDeviceActivity.class);
             intent.putExtra("deviceName", (String) listAdapter.getChild(groupPosition, childPosition));
             try {
-                startActivity(intent);
+                startActivityForResult(intent, 100);
             } catch (ActivityNotFoundException a) {
                 Toast.makeText(getApplicationContext(),
                         getString(R.string.errorSwitchingRouter),
@@ -170,9 +159,16 @@ public class ZonesActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        prepareListData();
+    }
+
     /*
-     * Preparing the list data
-     */
+         * Preparing the list data
+         */
 	private void prepareListData() {
 		listDataHeader = new ArrayList<String>();
 		listDataChild = new HashMap<String, List<String>>();
@@ -207,6 +203,7 @@ public class ZonesActivity extends Activity {
         }
         listDataChild.put(listDataHeader.get(i++), children);
 
-	}
+        listAdapter.update(listDataHeader, listDataChild);
+    }
 
 }

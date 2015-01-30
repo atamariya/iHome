@@ -2,6 +2,7 @@ package com.at.iHome.logic;
 
 import com.at.iHome.api.Command;
 import com.at.iHome.api.Device;
+import com.at.iHome.api.DeviceType;
 
 public class IPCam extends Device {
 
@@ -10,6 +11,7 @@ public class IPCam extends Device {
 //		uri = "/mjpeg.cgi";  // Video uri
 		uri = "/image/jpeg.cgi"; // Image uri
         this.url = scheme + host + uri;
+        type = DeviceType.IPCAM;
         
 		// Mode control
 		commands.put("camera", "dummy");

@@ -26,6 +26,8 @@ abstract public class Device {
     protected String password;
     protected String scheme = "http://";
 
+    protected DeviceType type;
+
     /**
      * Used for "all lights off/ all off" scenario
      */
@@ -235,6 +237,10 @@ abstract public class Device {
 
     public void setHost(String host) {
         this.host = host;
+    }
+
+    public DeviceType getType() {
+        return type;
     }
 
 }

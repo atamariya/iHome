@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.at.iHome.api.Context;
 import com.at.iHome.api.Device;
+import com.at.iHome.api.DeviceType;
 import com.at.iHome.logic.CommandHandler;
 import com.at.ihome.R;
 
@@ -26,7 +27,6 @@ public class AddDeviceActivity extends Activity implements View.OnClickListener 
     int type;
     Context zone;
 
-    List<String> deviceTypes = CommandHandler.getInstance().getSupportedDevices();
     List<Context> zones = CommandHandler.getInstance().getKnownContexts();
     private Spinner typeSpinner, zoneSpinner;
 
@@ -53,12 +53,14 @@ public class AddDeviceActivity extends Activity implements View.OnClickListener 
 
         typeSpinner = (Spinner) findViewById(R.id.type);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, deviceTypes);
+        ArrayAdapter<DeviceType> adapter = new ArrayAdapter<DeviceType>(this, android.R.layout.simple_spinner_item,
+                DeviceType.values());
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         typeSpinner.setAdapter(adapter);
-        typeSpinner.setOnItemSelectedListener(typeListener);
+        // Not required as default is always selected
+//        typeSpinner.setOnItemSelectedListener(typeListener);
 
         zoneSpinner = (Spinner) findViewById(R.id.zones);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -68,9 +70,10 @@ public class AddDeviceActivity extends Activity implements View.OnClickListener 
         adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         zoneSpinner.setAdapter(adapter1);
-        zoneSpinner.setOnItemSelectedListener(zoneListener);
+        // Not required as default is always selected
+//        zoneSpinner.setOnItemSelectedListener(zoneListener);
 
-        loadDeviceInfo((String) savedInstanceState.get("deviceName"));
+        loadDeviceInfo(getIntent().getStringExtra("deviceName"));
 
         enableOk();
 
@@ -90,19 +93,20 @@ public class AddDeviceActivity extends Activity implements View.OnClickListener 
         Device device = CommandHandler.getInstance().getDevice(str);
         name.setText(device.getName());
         host.setText(device.getHost());
+        host.setEnabled(false);
 
-        ArrayAdapter<String> adapter = (ArrayAdapter<String>) zoneSpinner.getAdapter();
-        zoneSpinner.setSelection(adapter.getPosition(device.getContext().getName()));
+        ArrayAdapter<Context> adapter = (ArrayAdapter<Context>) zoneSpinner.getAdapter();
+        zoneSpinner.setSelection(adapter.getPosition(device.getContext()));
 
-        adapter = (ArrayAdapter<String>) typeSpinner.getAdapter();
-//        typeSpinner.setSelection(adapter.getPosition(device.getName()));
+        ArrayAdapter<DeviceType> adapter1 = (ArrayAdapter<DeviceType>) typeSpinner.getAdapter();
+        typeSpinner.setSelection(adapter1.getPosition(device.getType()));
     }
 
     private void enableOk() {
         Button ok = (Button) findViewById(R.id.ok);
         ok.setEnabled(false);
 
-        if (zone == null || name.getText().toString().isEmpty() || host.toString().isEmpty()) {
+        if (zone == null || name.getText().toString().isEmpty() || host.getText().toString().isEmpty()) {
             return;
         }
 
@@ -113,37 +117,38 @@ public class AddDeviceActivity extends Activity implements View.OnClickListener 
     @Override
     public void onClick(View v) {
         CommandHandler instance = CommandHandler.getInstance();
-        Device device = instance.createDevice(zone, name.getText().toString(), host.getText().toString(), type);
+        ArrayAdapter<DeviceType> adapter1 = (ArrayAdapter<DeviceType>) typeSpinner.getAdapter();
+        Device device = instance.createDevice(zone, name.getText().toString(), host.getText().toString(), adapter1.getItem(type));
         instance.addDevice(device);
         finish();
     }
 
 
-class TypeListener implements AdapterView.OnItemSelectedListener {
+    class TypeListener implements AdapterView.OnItemSelectedListener {
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
 
+        }
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            type = position;
+            enableOk();
+        }
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        type = position;
-        enableOk();
+    class ZoneListener implements AdapterView.OnItemSelectedListener {
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            zone = zones.get(position);
+            enableOk();
+        }
     }
-}
-
-class ZoneListener implements AdapterView.OnItemSelectedListener {
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        zone = zones.get(position);
-        enableOk();
-    }
-}
 }

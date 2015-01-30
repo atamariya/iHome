@@ -9,6 +9,7 @@ import java.util.Map;
 import com.at.iHome.api.Command;
 import com.at.iHome.api.Context;
 import com.at.iHome.api.Device;
+import com.at.iHome.api.DeviceType;
 import com.at.iHome.api.Group;
 import com.at.iHome.api.InvalidDeviceType;
 import com.at.iHome.api.Macro;
@@ -313,31 +314,31 @@ public class CommandHandler {
 
     public List<Context> getKnownContexts() {
         List<Context> contexts = new ArrayList<Context>();
-        contexts.add(Context.DEFAULT_CONTEXT);
         contexts.addAll(knownContexts);
+        contexts.add(Context.DEFAULT_CONTEXT);
         return contexts;
     }
 
-    public List<String> getSupportedDevices() {
+    public DeviceType[] getSupportedDevices() {
         List<String> type = new ArrayList<String>();
         type.add("Cisco DCS-930L");
         type.add("Denon AVR");
         type.add("XBMC");
 
-        return type;
+
+        return DeviceType.values();
     }
 
-    public Device createDevice(Context context, String name, String host, int type) {
-        String deviceType = getSupportedDevices().get(type);
+    public Device createDevice(Context context, String name, String host, DeviceType type) {
         Device device = null;
         switch (type) {
-            case 0:
+            case IPCAM:
                 device = new IPCam(name, host);
                 break;
-            case 1:
+            case DENON:
                 device = new DenonAVR(name, host);
                 break;
-            case 2:
+            case XBMC:
                 device = new XBMC(name, host);
                 break;
             default:
