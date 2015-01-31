@@ -2,6 +2,7 @@ package com.at.iHome.logic;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.at.iHome.api.Command;
@@ -134,8 +135,11 @@ public class XBMC extends Device {
 		                String[] arr = getParams().toArray(new String[getParams().size()]);
 		                values.put(commandName, String.format(paramTemplate.get(commandName), arr));
 		            }
-		            
-		            return (String.format(CMD, commands.get(commandName), values.get(commandName)));
+
+                    String param = values.get(commandName);
+                    if (param == null)
+                        param = "";
+		            return (String.format(CMD, commands.get(commandName), param));
 					
 				}
 			});
@@ -153,4 +157,15 @@ public class XBMC extends Device {
 	public boolean isAudioDevice() {
 		return true;
 	}
+
+    @Override
+    protected List<Command> executeAll(String name) {
+        List<Command> chain = super.executeAll(name);
+        Command command = getCommand(CommandHandler.getInstance().getSynonym(
+                name));
+        if (command != null) {
+            chain.add(command);
+        }
+        return chain;
+    }
 }
