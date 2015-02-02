@@ -331,12 +331,6 @@ public class CommandHandler {
     }
 
     public DeviceType[] getSupportedDevices() {
-        List<String> type = new ArrayList<String>();
-        type.add("Cisco DCS-930L");
-        type.add("Denon AVR");
-        type.add("XBMC");
-
-
         return DeviceType.values();
     }
 

@@ -1,8 +1,7 @@
 package com.at.iHome.api;
 
-import android.util.Base64;
-
 import com.at.iHome.logic.CommandHandler;
+import com.at.iHome.util.BaseUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,8 +97,8 @@ abstract public class Device {
             cmd = new Command(url, CMD, param);
 
             if (username != null && password != null) {
-                String header = "Basic " + Base64.encodeToString(
-                        (username + ":" + password).getBytes(), Base64.DEFAULT);
+                String header = "Basic " + BaseUtil.encode(
+                        (username + ":" + password));
                 cmd.setHeader("Authorization", header);
             }
         }

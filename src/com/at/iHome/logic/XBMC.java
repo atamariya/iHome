@@ -1,10 +1,5 @@
 package com.at.iHome.logic;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.at.iHome.api.Command;
 import com.at.iHome.api.Device;
 import com.at.iHome.api.DeviceType;
@@ -12,6 +7,10 @@ import com.at.iHome.api.ResponseProcessor;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class XBMC extends Device {
     protected Map<String, String> values = new HashMap<String, String>();
