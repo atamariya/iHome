@@ -57,6 +57,8 @@ public class CommandHandler {
 
         synonyms.put("open", "xbmc");
         synonyms.put("search", "xbmc");
+        
+        synonyms.put("switch", "light");
 
 		// mis-spelling
 		synonyms.put("of", "off");
@@ -66,6 +68,8 @@ public class CommandHandler {
 		synonyms.put("resume", "play");
 		synonyms.put("mute", "volume mute");
 		synonyms.put("unmute", "volume unmute");
+		synonyms.put("open door", "switch on 4");
+		synonyms.put("close door", "switch off 4");
 
         // works only for xbmc
 		synonyms.put("song", "search song,open song");
@@ -184,7 +188,8 @@ public class CommandHandler {
                         tmp.append(" ");
                 }
 
-                device.setParams(tmp.toString());
+                if (tmp.length() > 0)
+                	device.setParams(tmp.toString());
                 device.setAll(all);
 
                 // Expand macro for action
@@ -215,7 +220,7 @@ public class CommandHandler {
                 for (Device dev : devices) {
                     if ("play".equals(token) && !status.isEmpty()) {
                         token = status.get(0);
-                        device.setParams(status.get(1));
+                        dev.setParams(status.get(1));
                     }
                     dev.setAll(all);
                     chain.addAll(dev.execute(context, token));
@@ -345,6 +350,9 @@ public class CommandHandler {
                 break;
             case XBMC:
                 device = new XBMC(name, host);
+                break;
+            case SPARK_CORE:
+                device = new LightControl(name);
                 break;
             default:
                 throw new InvalidDeviceType();

@@ -1,6 +1,8 @@
 package com.at.iHome.logic;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.at.iHome.api.Command;
 import com.at.iHome.api.Device;
@@ -16,6 +18,7 @@ import com.at.iHome.api.DeviceType;
  */
 public class LightControl extends Device {
     private String token = "cb1b31f441b50a1f9e4496c44a15da5abb3cfe2b";
+    protected Map<String, String> paramTemplate = new HashMap<String, String>();
 
     /**
      *
@@ -33,17 +36,9 @@ public class LightControl extends Device {
         commands.put("on", "D6,HIGH");
 		commands.put("off", "D6,LOW");
 		
-		commands.put("1 on", "D6,HIGH");
-		commands.put("1 off", "D6,LOW");
-		
-		commands.put("2 on", "D5,HIGH");
-		commands.put("2 off", "D5,LOW");
-		
-		commands.put("3 on", "D4,HIGH");
-		commands.put("3 off", "D4,LOW");
-		
-		commands.put("4 on", "D3,HIGH");
-		commands.put("4 off", "D3,LOW");
+		paramTemplate.put("on", "D%s,HIGH");
+		paramTemplate.put("off", "D%s,LOW");
+
 	}
 
     public Command getCommand(String commandName) {
@@ -51,6 +46,12 @@ public class LightControl extends Device {
         if (cmd != null) {
             String header = "Bearer " + token;
             cmd.setHeader("Authorization", header);
+            
+            if (getParams() != null && paramTemplate.get(commandName) != null) {
+                String[] arr = getParams().toArray(new String[getParams().size()]);
+                cmd.setValue(String.format(paramTemplate.get(commandName), arr));
+            }
+            
         }
 
         return cmd;
@@ -59,12 +60,8 @@ public class LightControl extends Device {
     @Override
     protected List<Command> executeAll(String name) {
     	List<Command> chain = super.executeAll(name);
-    	for (String cmd : commands.keySet()) {
-    		if (cmd.contains(name)) {
-//    			getCommand(cmd).doInBackground(scheme + host);
-//			getCommand(cmd).execute(scheme + host);
-    			chain.add(getCommand(name));
-    		}
+    	for (String cmd : new String[] {"1", "2", "3", "4"}) {
+    			chain.add(getCommand(name + " " + cmd));
 		}
     	return chain;
     }
