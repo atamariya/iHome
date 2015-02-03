@@ -60,8 +60,9 @@ public class LightControl extends Device {
     @Override
     protected List<Command> executeAll(String name) {
     	List<Command> chain = super.executeAll(name);
-    	for (String cmd : new String[] {"1", "2", "3", "4"}) {
-    			chain.add(getCommand(name + " " + cmd));
+    	for (String cmd : new String[] {"5", "6", "3", "4"}) {
+    		setParams(cmd);
+    		chain.add(getCommand(name));
 		}
     	return chain;
     }

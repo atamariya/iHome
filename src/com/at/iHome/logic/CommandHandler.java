@@ -152,6 +152,7 @@ public class CommandHandler {
         }
 
         // Execute macros
+        cmd = cmd.toLowerCase();
         Device macro = getDevice(cmd);
         if (macro instanceof Macro) {
             chain.addAll(macro.execute(context, null));

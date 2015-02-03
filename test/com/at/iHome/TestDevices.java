@@ -73,6 +73,7 @@ public class TestDevices {
 		string = "all lights on";
 		chain = CommandHandler.getInstance().execute(context, string);
 		assertEquals(4, chain.size());
+		assertNotEquals(null, chain.get(0));
 		System.out.println(chain);
 	}
 

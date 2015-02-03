@@ -33,6 +33,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
@@ -351,6 +352,10 @@ public class MainActivity extends Activity {
                         params[i].getResponseProcessor().process(str);
                     }
                     publishProgress((int) ((i / (float) params.length) * 100));
+                } catch (HttpHostConnectException e) {
+                    e.printStackTrace();
+                    msg = "You are not connected to internet";
+                    breakChain = true;
                 } catch (IOException e) {
                     e.printStackTrace();
                     msg = "One or more devices are unavailable";
