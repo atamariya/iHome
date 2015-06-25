@@ -3,6 +3,23 @@ package com.at.iHome.api;
 public class Context {
     private String name;
     private int rssi, range;
+    private boolean audioPlaying = false, mediaPlaying = false;
+
+    public boolean isMediaPlaying() {
+        return mediaPlaying;
+    }
+
+    public void setMediaPlaying(boolean mediaPlaying) {
+        this.mediaPlaying = mediaPlaying;
+    }
+
+    public boolean isAudioPlaying() {
+        return audioPlaying;
+    }
+
+    public void setAudioPlaying(boolean audioPlaying) {
+        this.audioPlaying = audioPlaying;
+    }
 
     public static final Context DEFAULT_CONTEXT = new Context("Default");
 
