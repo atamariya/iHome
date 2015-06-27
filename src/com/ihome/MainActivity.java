@@ -49,7 +49,7 @@ import java.util.Locale;
 import java.util.Map;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AudioFragment.Handler {
 
     private TextView txtSpeechInput, zoneText;
     private ImageButton btnSpeak;
@@ -365,6 +365,26 @@ public class MainActivity extends Activity {
                         getString(R.string.errorSwitchingRouter),
                         Toast.LENGTH_SHORT).show();
             }
+    }
+
+    @Override
+    public void mute() {
+        processCommand("volume mute");
+    }
+
+    @Override
+    public void unmute() {
+        processCommand("volume unmute");
+    }
+
+    @Override
+    public void up() {
+        processCommand("volume up");
+    }
+
+    @Override
+    public void down() {
+        processCommand("volume down");
     }
 
     class NetTask extends AsyncTask<Command, Integer, Long> {

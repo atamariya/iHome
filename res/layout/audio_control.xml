@@ -7,7 +7,7 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/upButton"
+        android:id="@+id/downButton"
         android:src="@drawable/ic_action_expand" />
 
     <ImageButton
@@ -25,7 +25,7 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/downButton"
+        android:id="@+id/upButton"
         android:src="@drawable/ic_action_collapse" />
 
 </LinearLayout>
