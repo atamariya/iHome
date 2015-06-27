@@ -49,7 +49,7 @@ import java.util.Locale;
 import java.util.Map;
 
 
-public class MainActivity extends Activity implements AudioFragment.Handler {
+public class MainActivity extends Activity implements AudioFragment.Handler, VideoFragment.Handler {
 
     private TextView txtSpeechInput, zoneText;
     private ImageButton btnSpeak;
@@ -385,6 +385,31 @@ public class MainActivity extends Activity implements AudioFragment.Handler {
     @Override
     public void down() {
         processCommand("volume down");
+    }
+
+    @Override
+    public void previous() {
+        processCommand("previous");
+    }
+
+    @Override
+    public void play() {
+        processCommand("play");
+    }
+
+    @Override
+    public void pause() {
+        processCommand("pause");
+    }
+
+    @Override
+    public void stop() {
+        processCommand("stop");
+    }
+
+    @Override
+    public void next() {
+        processCommand("next");
     }
 
     class NetTask extends AsyncTask<Command, Integer, Long> {
