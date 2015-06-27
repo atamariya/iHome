@@ -20,6 +20,8 @@ public class VideoFragment extends Fragment {
         void pause();
         void stop();
         void next();
+        void rewind();
+        void forward();
     }
 
     Handler handler;
@@ -72,6 +74,22 @@ public class VideoFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     handler.next();
+                }
+            });
+
+            button = (ImageButton) view.findViewById(R.id.rewind);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handler.rewind();
+                }
+            });
+
+            button = (ImageButton) view.findViewById(R.id.forward);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handler.forward();
                 }
             });
         }

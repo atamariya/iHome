@@ -160,6 +160,7 @@ public class MainActivity extends Activity implements AudioFragment.Handler, Vid
         if (context.isMediaPlaying()) {
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.show(videoFragment);
+            transaction.show(audioFragment);
             transaction.commit();
         } else {
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -410,6 +411,16 @@ public class MainActivity extends Activity implements AudioFragment.Handler, Vid
     @Override
     public void next() {
         processCommand("next");
+    }
+
+    @Override
+    public void rewind() {
+        processCommand("rewind");
+    }
+
+    @Override
+    public void forward() {
+        processCommand("forward");
     }
 
     class NetTask extends AsyncTask<Command, Integer, Long> {
