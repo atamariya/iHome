@@ -153,7 +153,7 @@ public class XBMC extends Device {
     }
 
 	@Override
-	public boolean isAudioDevice() {
+	public boolean isMediaDevice() {
 		return true;
 	}
 

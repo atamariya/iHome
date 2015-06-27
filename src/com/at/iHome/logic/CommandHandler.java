@@ -173,7 +173,6 @@ public class CommandHandler {
         if ("volume".equals(token)) {
             for (Device device : devices) {
                 if (device.isAudioDevice()) {
-                    context.setAudioPlaying(true);
                     chain.addAll(device.execute(context, cmd));
                 }
             }
@@ -221,7 +220,6 @@ public class CommandHandler {
                 // Handle "all off" case
                 for (Device dev : devices) {
                     if ("play".equals(token) && !status.isEmpty()) {
-                        context.setMediaPlaying(true);
                         token = status.get(0);
                         dev.setParams(status.get(1));
                     }

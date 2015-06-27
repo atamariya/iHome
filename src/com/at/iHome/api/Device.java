@@ -31,7 +31,15 @@ abstract public class Device {
      * Used for "all lights off/ all off" scenario
      */
     protected boolean all = false;
-    protected boolean lightControl, audioDevice;
+    protected boolean lightControl, audioDevice, mediaDevice;
+
+    public boolean isMediaDevice() {
+        return mediaDevice;
+    }
+
+    public void setMediaDevice(boolean mediaDevice) {
+        this.mediaDevice = mediaDevice;
+    }
 
     /**
      * Logical devices (e.g. SettingsCmd) must not have a context. It is only meant for physical devices.
@@ -67,6 +75,7 @@ abstract public class Device {
                         if (command != null) {
                             command.setChained(i-- > 1);
                             chain.add(command);
+                            updateContext(ctx, !"stop".equals(cmd));
                         }
                     }
                 }
@@ -75,9 +84,17 @@ abstract public class Device {
                 // command.doInBackground(scheme + host);
                 // command.execute(scheme + host);
                 chain.add(command);
+                updateContext(ctx, !"stop".equals(cmd));
             }
         }
         return chain;
+    }
+
+    private void updateContext(Context ctx, boolean flag) {
+        if (isMediaDevice())
+            ctx.setMediaPlaying(flag);
+        else if (isAudioDevice())
+            ctx.setAudioPlaying(flag);
     }
 
     /**
