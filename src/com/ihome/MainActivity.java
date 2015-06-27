@@ -2,6 +2,8 @@ package com.ihome;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -58,6 +60,8 @@ public class MainActivity extends Activity {
     private String msg;
     private SearchView searchView;
     private WifiManager wifiManager;
+    private Fragment audioFragment;
+    private Fragment videoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +117,55 @@ public class MainActivity extends Activity {
         });
 
         loadZoneInfo();
+
+        // However, if we're being restored from a previous state,
+        // then we don't need to do anything and should return or else
+        // we could end up with overlapping fragments.
+        if (savedInstanceState != null) {
+            return;
+        }
+
+        // Create a new Fragment to be placed in the activity layout
+        audioFragment = new AudioFragment();
+
+        // In case this activity was started with special instructions from an
+        // Intent, pass the Intent's extras to the fragment as arguments
+        audioFragment.setArguments(getIntent().getExtras());
+
+        // Add the fragment to the 'fragment_container' FrameLayout
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.audio_video, audioFragment);
+        transaction.hide(audioFragment);
+
+        videoFragment = new VideoFragment();
+        transaction.add(R.id.audio_video, videoFragment);
+        transaction.hide(videoFragment);
+
+        transaction.commit();
+    }
+
+    private void showAudioControl(com.at.iHome.api.Context context) {
+        if (context.isAudioPlaying()) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.show(audioFragment);
+            transaction.commit();
+        } else {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.hide(audioFragment);
+            transaction.commit();
+        }
+    }
+
+    private void showVideoControl(com.at.iHome.api.Context context) {
+        if (context.isMediaPlaying()) {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.show(videoFragment);
+            transaction.commit();
+        } else {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.hide(videoFragment);
+            transaction.commit();
+        }
     }
 
     public void speakText(String toSpeak) {
@@ -227,6 +280,11 @@ public class MainActivity extends Activity {
         try {
             zoneText.setText("Zone: " + context.getName());
             commands = CommandHandler.getInstance().execute(context, str);
+
+            // Display audio/video controls
+            showAudioControl(context);
+            showVideoControl(context);
+
         } catch (ZoneException e) {
             speakText(getString(R.string.override_prompt));
             DialogFragment dialog = new ZoneOverrideDialog();

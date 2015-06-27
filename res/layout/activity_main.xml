@@ -38,6 +38,7 @@
         android:layout_alignParentBottom="@+id/zoneTxt" />
 
     <LinearLayout
+        android:id="@+id/audio_video"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -46,8 +47,8 @@
         android:layout_alignParentEnd="false"
         android:layout_below="@+id/txtSpeechInput">
 
-        <include android:id="@+id/audio" layout="@layout/audio_control" />
-        <include android:id="@+id/video" layout="@layout/video_control" />
+        <!--<include android:id="@+id/audio" layout="@layout/audio_control" />
+        <include android:id="@+id/video" layout="@layout/video_control" />-->
     </LinearLayout>
 
     <LinearLayout
