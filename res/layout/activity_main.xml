@@ -52,19 +52,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:dividerPadding="@dimen/activity_horizontal_margin"
-        android:layout_alignParentEnd="false"
-        android:layout_below="@+id/txtSpeechInput">
-
-        <include android:id="@+id/audio" layout="@layout/audio_control" />
-        <include android:id="@+id/video" layout="@layout/video_control" />
-    </LinearLayout>
-
-    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

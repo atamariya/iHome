@@ -11,6 +11,7 @@ public class Context {
 
     public void setMediaPlaying(boolean mediaPlaying) {
         this.mediaPlaying = mediaPlaying;
+        setAudioPlaying(mediaPlaying);
     }
 
     public boolean isAudioPlaying() {
