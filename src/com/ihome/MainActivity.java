@@ -62,6 +62,7 @@ public class MainActivity extends Activity implements AudioFragment.Handler, Vid
     private WifiManager wifiManager;
     private Fragment audioFragment;
     private Fragment videoFragment;
+    private Fragment colorPickerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +141,10 @@ public class MainActivity extends Activity implements AudioFragment.Handler, Vid
         videoFragment = new VideoFragment();
         transaction.add(R.id.audio_video, videoFragment);
         transaction.hide(videoFragment);
+
+        colorPickerFragment = new ColorPickerFragment();
+        transaction.add(R.id.audio_video, colorPickerFragment);
+//        transaction.hide(colorPickerFragment);
 
         transaction.commit();
     }
