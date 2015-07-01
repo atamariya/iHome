@@ -21,13 +21,7 @@ import com.at.ihome.R;
  */
 public class ColorPickerFragment extends Fragment {
     public interface Handler {
-        void mute();
-
-        void unmute();
-
-        void up();
-
-        void down();
+        void setColor(int color);
     }
 
     Handler handler;
@@ -42,10 +36,11 @@ public class ColorPickerFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View colorPanel = inflater.inflate(R.layout.color_picker, container, false);
+        final View view = inflater.inflate(R.layout.color_picker, container, false);
 //        if (handler != null)
         {
-            final ImageView marker = (ImageView) colorPanel.findViewById(R.id.marker);
+            final ImageView marker = (ImageView) view.findViewById(R.id.marker);
+            final View colorPanel = view.findViewById(R.id.colormap);
 
             int specWidth = View.MeasureSpec.makeMeasureSpec(0 /* any */, View.MeasureSpec.UNSPECIFIED);
             colorPanel.measure(specWidth, specWidth);
@@ -65,7 +60,7 @@ public class ColorPickerFragment extends Fragment {
                     if (y > colorPanel.getHeight())
                         y = colorPanel.getHeight() - marker.getHeight();
 
-                    int pixel = bMap.getPixel((int) 50, (int) 50); //the background of the layout goes here...
+                    int pixel = bMap.getPixel((int) x, (int) y); //the background of the layout goes here...
 
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
@@ -82,7 +77,7 @@ public class ColorPickerFragment extends Fragment {
                             int inBlue = Color.blue(pixel);
                             int inGreen = Color.green(pixel);
                             Log.d("Colors", "R:" + inRed + " G:" + inGreen + " B:" + inBlue);
-                            // Write your code to perform an action on contineus touch move
+                            // Write your code to perform an action on continuous touch move
                             break;
                         case MotionEvent.ACTION_UP:
                             Log.d("up ", x + " " + y);
@@ -96,7 +91,7 @@ public class ColorPickerFragment extends Fragment {
             colorPanel.setOnTouchListener(flt);
 
         }
-        return colorPanel;
+        return view;
     }
 
 }
