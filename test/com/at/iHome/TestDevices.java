@@ -50,7 +50,7 @@ public class TestDevices {
 		device = new SettingsCmd("settings");
 		handler.addDevice(device);
 		
-		device = new ColorLight("53ff71066667574819442167");
+		device = new ColorLight("one");
 		device.setContext(new Context("4"));
 		handler.addDevice(device);
 	}
@@ -298,11 +298,17 @@ public class TestDevices {
 		List<Command> chain;
 		String string;
 
-//		string = "paint one red";
-//		chain = CommandHandler.getInstance().execute(context, string);
-//		assertEquals(1, chain.size());
-//		assertEquals(true, context.isPaintable());
-//		System.out.println(chain);
+		string = "paint one red";
+		chain = CommandHandler.getInstance().execute(context, string);
+		assertEquals(1, chain.size());
+		assertEquals(true, context.isPaintable());
+		System.out.println(chain);
+		
+		string = "paint all red";
+		chain = CommandHandler.getInstance().execute(context, string);
+		assertEquals(1, chain.size());
+		assertEquals(true, context.isPaintable());
+		System.out.println(chain);
 		
 		string = "play radio";
 		chain = CommandHandler.getInstance().execute(context, string);

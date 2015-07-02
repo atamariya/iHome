@@ -34,6 +34,10 @@ public class CommandHandler {
 		device.setContext(new Context("2"));
 		addDevice(device);
 
+        device = new ColorLight("one");
+        device.setContext(new Context("2"));
+        addDevice(device);
+
 		device = new XBMC("xbmc", "192.168.0.26");
 		device.setContext(new Context("2"));
         addDevice(device);
@@ -88,6 +92,8 @@ public class CommandHandler {
 			group = "set";
 		} else if (device instanceof Macro) {
 			group = "macro";
+		} else if (device instanceof ColorLight) {
+			group = "paint";
 		}
 		
 		Group groupDevice;

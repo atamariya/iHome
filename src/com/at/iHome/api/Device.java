@@ -31,7 +31,7 @@ abstract public class Device {
      * Used for "all lights off/ all off" scenario
      */
     protected boolean all = false;
-    protected boolean lightControl, audioDevice, mediaDevice;
+    protected boolean lightControl, audioDevice, mediaDevice, paintable;
 
     public boolean isMediaDevice() {
         return mediaDevice;
@@ -95,6 +95,7 @@ abstract public class Device {
             ctx.setMediaPlaying(flag);
         else if (isAudioDevice())
             ctx.setAudioPlaying(flag);
+        ctx.setPaintable(isPaintable());
     }
 
     /**
@@ -258,5 +259,19 @@ abstract public class Device {
     public DeviceType getType() {
         return type;
     }
+
+	/**
+	 * @return the paintable
+	 */
+	public boolean isPaintable() {
+		return paintable;
+	}
+
+	/**
+	 * @param paintable the paintable to set
+	 */
+	public void setPaintable(boolean paintable) {
+		this.paintable = paintable;
+	}
 
 }

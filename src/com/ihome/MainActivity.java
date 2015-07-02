@@ -49,7 +49,8 @@ import java.util.Locale;
 import java.util.Map;
 
 
-public class MainActivity extends Activity implements AudioFragment.Handler, VideoFragment.Handler {
+public class MainActivity extends Activity implements AudioFragment.Handler, VideoFragment.Handler,
+        ColorPickerFragment.Handler {
 
     private TextView txtSpeechInput, zoneText;
     private ImageButton btnSpeak;
@@ -144,34 +145,31 @@ public class MainActivity extends Activity implements AudioFragment.Handler, Vid
 
         colorPickerFragment = new ColorPickerFragment();
         transaction.add(R.id.audio_video, colorPickerFragment);
-//        transaction.hide(colorPickerFragment);
+        transaction.hide(colorPickerFragment);
 
         transaction.commit();
     }
 
-    private void showAudioControl(com.at.iHome.api.Context context) {
+    private void updateView(com.at.iHome.api.Context context) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
         if (context.isAudioPlaying()) {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.show(audioFragment);
-            transaction.commit();
         } else {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.hide(audioFragment);
-            transaction.commit();
         }
-    }
 
-    private void showVideoControl(com.at.iHome.api.Context context) {
         if (context.isMediaPlaying()) {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.show(videoFragment);
-            transaction.show(audioFragment);
-            transaction.commit();
         } else {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.hide(videoFragment);
-            transaction.commit();
         }
+
+        if (context.isPaintable()) {
+            transaction.show(colorPickerFragment);
+        } else {
+            transaction.hide(colorPickerFragment);
+        }
+        transaction.commit();
     }
 
     public void speakText(String toSpeak) {
@@ -288,8 +286,7 @@ public class MainActivity extends Activity implements AudioFragment.Handler, Vid
             commands = CommandHandler.getInstance().execute(context, str);
 
             // Display audio/video controls
-            showAudioControl(context);
-            showVideoControl(context);
+            updateView(context);
 
         } catch (ZoneException e) {
             speakText(getString(R.string.override_prompt));
@@ -426,6 +423,11 @@ public class MainActivity extends Activity implements AudioFragment.Handler, Vid
     @Override
     public void forward() {
         processCommand("forward");
+    }
+
+    @Override
+    public void setColor(int color) {
+        processCommand(String.format("paint one %x", color));
     }
 
     class NetTask extends AsyncTask<Command, Integer, Long> {

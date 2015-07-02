@@ -3,7 +3,15 @@ package com.at.iHome.api;
 public class Context {
     private String name;
     private int rssi, range;
-    private boolean audioPlaying = false, mediaPlaying = false;
+    private boolean audioPlaying = false, mediaPlaying = false, paintable = false;
+
+    public boolean isPaintable() {
+        return paintable;
+    }
+
+    public void setPaintable(boolean paintable) {
+        this.paintable = paintable;
+    }
 
     public boolean isMediaPlaying() {
         return mediaPlaying;

@@ -20,6 +20,9 @@ import com.at.ihome.R;
  * Created by Anand.Tamariya on 27-Jun-15.
  */
 public class ColorPickerFragment extends Fragment {
+
+    private Bitmap bMap;
+
     public interface Handler {
         void setColor(int color);
     }
@@ -37,14 +40,14 @@ public class ColorPickerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.color_picker, container, false);
-//        if (handler != null)
+        if (handler != null)
         {
             final ImageView marker = (ImageView) view.findViewById(R.id.marker);
             final View colorPanel = view.findViewById(R.id.colormap);
 
             int specWidth = View.MeasureSpec.makeMeasureSpec(0 /* any */, View.MeasureSpec.UNSPECIFIED);
             colorPanel.measure(specWidth, specWidth);
-            final Bitmap bMap = Bitmap.createBitmap(colorPanel.getMeasuredWidth(), colorPanel.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+            bMap = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.colormap);
 
             View.OnTouchListener flt = new View.OnTouchListener() {
 
@@ -80,6 +83,7 @@ public class ColorPickerFragment extends Fragment {
                             // Write your code to perform an action on continuous touch move
                             break;
                         case MotionEvent.ACTION_UP:
+                            handler.setColor(pixel);
                             Log.d("up ", x + " " + y);
                             // Write your code to perform an action on touch up
                             break;
