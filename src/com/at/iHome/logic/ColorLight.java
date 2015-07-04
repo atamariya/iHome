@@ -9,9 +9,9 @@ import com.at.iHome.api.DeviceType;
 
 /**
  * curl https://api.spark.io/v1/devices/0123456789abcdef01234567/brew \
-     -d access_token=9876987698769876987698769876987698769876 -d params=D7,HIGH -d params=D6,LOW
+ -d access_token=9876987698769876987698769876987698769876 -d params=D7,HIGH -d params=D6,LOW
  *  curl -H "Authorization: Bearer 38bb7b318cc6898c80317decb34525844bc9db55"
-  https://..
+ https://..
  * @author Anand.Tamariya
  *
  */
@@ -23,29 +23,30 @@ public class ColorLight extends Device {
      *
      * @param name token of the device
      */
-	public ColorLight(String name) {
-		super(name, "api.spark.io");
-        scheme = "https://";
-        uri = "/v1/devices/" + name + "/digitalwrite";
-        CMD = "params";
+    public ColorLight(String name) {
+        super(name, "192.168.0.26:8080");
+        uri = "/";
+        CMD = "color";
         this.url = scheme + host + uri;
         type = DeviceType.SPARK_CORE;
 
         commands.put("red", "ffff0000");
         commands.put("green", "ff00ff00");
         commands.put("blue", "ff0000ff");
-	}
+        commands.put("off", "00000000");
+        commands.put("black", "00000000");
+    }
 
     public Command getCommand(String commandName) {
         Command cmd = null;
         if (getName().equals(commandName) || "all".equals(commandName)) {
-        	String color = null;
-        	if (getParams() != null) {
-        		color = getParams().get(0);
+            String color = null;
+            if (getParams() != null) {
+                color = getParams().get(0);
                 if (commands.containsKey(color))
                     color = commands.get(color);
-        	}
-        	cmd = new Command(url, commandName, color);
+            }
+            cmd = new Command(url, CMD, color);
         }
 
         return cmd;
@@ -60,13 +61,13 @@ public class ColorLight extends Device {
 //		}
 //    	return chain;
 //    }
-    
-	public boolean isLightControl() {
-		return true;
-	}
 
-	@Override
-	public boolean isPaintable() {
-		return true;
-	}
+    public boolean isLightControl() {
+        return true;
+    }
+
+    @Override
+    public boolean isPaintable() {
+        return true;
+    }
 }
